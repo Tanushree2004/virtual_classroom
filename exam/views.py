@@ -246,14 +246,15 @@ def submit_exam(request, exam_id):
     descriptive_answers = {}
     #now = datetime.now()
     now = timezone.now()
-    duration = (
+    """duration = (
         datetime.combine(exam.deadline, exam.end_duration)- max(datetime.combine(exam.deadline, exam.start_duration),now)
-    ).total_seconds()
+    ).total_seconds()"""
     
-    exam_start_datetime = datetime.combine(exam.deadline, exam.start_duration)
+    exam_start_datetime = make_aware(datetime.combine(exam.deadline, exam.start_duration))
     exam_started = now >= exam_start_datetime
-    exam_end_datetime = datetime.combine(exam.deadline, exam.end_duration)
+    exam_end_datetime = make_aware(datetime.combine(exam.deadline, exam.end_duration))
     exam_end = now >= exam_end_datetime
+    duration = (exam_end_datetime - max(exam_start_datetime,now)).total_seconds()
     if request.method == "POST":
         for question in questions:
             if question.is_mcq:
