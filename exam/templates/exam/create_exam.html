@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Assignment{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/create_form_style.css' %}">
+
+<div class="assignment-form-container">
+    <h2 class="heading">Create New Exam</h2>
+
+    {% if user.role == "Instructor" %}
+    <form method="POST" action="{% url 'exam:create_exam' %}">
+        {% csrf_token %}
+
+        <label for="title">Exam Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <!--label for="class_group">Class Group:</label>
+        <input type="text" id="group" name="group" required-->
+        <label for="class_group">Class Group:</label>
+        <select id="group" name="group" required>
+            <option value="" disabled selected>-- Select a Classroom --</option>
+            {% for classroom in classrooms %}
+            <option value="{{ classroom.title }}">{{ classroom.title }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="deadline">Date of examination:</label>
+        <input type="date" id="deadline" name="deadline" required>
+
+        <label for="start_duration">Starting time of examination:</label>
+        <input type="time" id="start_duration" name="start_duration" required>
+
+        <label for="end_duration">Ending time of examination:</label>
+        <input type="time" id="end_duration" name="end_duration" required>
+
+        <button type="submit" class="submit-btn">Create Exam</button>
+    </form>
+    {% else %}
+    <p class="error-message">❌ You do not have permission to create assignments.</p>
+    {% endif %}
+</div>
+
+<script>
+    const startInput = document.getElementById("start_duration");
+    const endInput = document.getElementById("end_duration");
+    startInput.addEventListener('change', checktime);
+    endInput.addEventListener('change', checktime);
+
+    function checktime() {
+        if (endInput.value !== '' && startInput.value >= endInput.value) {
+            alert("End timing is wrong!");
+        }
+    }
+</script>
+{% endblock %}

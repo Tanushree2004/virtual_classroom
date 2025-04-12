@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<center>
+<h2>Exam Submitted!</h2>
+
+<p>This tab will automatically close in a few seconds.</p>
+</center>
+<!--a href="{% url 'exam:student_dashboard_exam' %}">Back to Dashboard</a-->
+<script>
+setTimeout(function() {
+    if (window.opener) {
+        window.opener.location.reload(true);  // Refresh the dashboard
+    }
+    window.close();  // Close this tab
+}, 3000);
+</script>
+{% endblock %}

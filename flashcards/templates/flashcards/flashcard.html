@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    main{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+    .flashcard-wrapper{
+        width: 430px;
+        padding: 30px;
+        background: rgb(32,43,50);
+        color: azure;
+        border-radius: 5px;
+    }
+    .flashcard-wrapper header{
+        color:azure;
+        font-size: 27px;
+        font-weight: 600;
+        text-align: center;
+    }
+    .flashcard-wrapper form{
+        border: 2px dashed azure;
+        cursor: pointer;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 160px;
+        border-radius: 5px;
+    }
+    form :where(i,p){
+        color: azure;
+    }
+    form i{
+        font-size: 50px;
+    }
+    form p{
+        font-size: 20px;
+        margin-top: 15px;
+    }
+    section .row{
+        background: rgba(153, 180, 197, 0.525);
+        margin: 20px 0;
+        padding: 20px;
+        list-style: none;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+    section .row i{
+        color: azure;
+        font-size: 25px;
+    }
+    section .upload-details span{
+        font-size: 20px;
+    }
+    .upload-progress .row .upload-content{
+        width: 100%;
+        margin-left: 10px;
+    }
+    
+    .upload-progress .upload-details{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 7px;
+    }
+    .upload-progress .upload-progress-bar{
+        height: 6px;
+        width: 100%;
+        background: #fff;
+        border-radius: 30px;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    .upload-progress-bar .progress{
+        height: 100%;
+        width: 50%;
+        background: rgb(32,43,50);
+        border-radius: inherit;
+    }
+    .uploaded-area{
+        max-height: 230px;
+        overflow-y: scroll;
+    }
+    .uploaded-area::-webkit-scrollbar{
+        width: 0px;
+    }
+    .uploaded-area .row .upload-content{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        /*color: red;*/
+    }
+    .uploaded-area .row .upload-details{
+        display: flex;
+        margin-left: 0;
+        flex-direction: column;
+    }
+    .uploaded-area .upload-details .size{
+        font-size: 16px;
+    }
+    .uploaded-area .fa-check{
+        font-size: 16px;
+        color: azure;
+    }
+    /*.button{
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 20px;
+        padding: 20px;
+    }*/
+</style>
+
+<main>
+    <div class="flashcard-wrapper">
+        <header>Upload File</header>
+        <form id="upload-form" action="#">
+            <input type="file" class="file-input" hidden>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Browse Files to Upload</p>
+        </form>
+        <section class="upload-progress">
+        </section>
+        <section class="uploaded-area">
+        </section>
+    </div>
+    <section class="button">
+        <button id="generate-btn" style="display: none">Generate Flashcard</button>
+    </section>
+</main>
+<script src="{% static 'js/flash.js' %}"></script>
+{% endblock content %}

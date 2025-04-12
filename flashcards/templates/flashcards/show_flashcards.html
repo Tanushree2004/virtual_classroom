@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h2 class="title">Generated Flashcards</h2>
+
+<div class="fflashcard-container">
+    {% for flashcard in flashcards %}
+        <div class="flashcard">
+            <!-- Topic Section -->
+            <div class="flashcard-topic">
+                {{ flashcard.topic }}
+            </div>
+            
+            <!-- Summary Section -->
+            <div class="flashcard-summary">
+                {{ flashcard.summary }}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<button id="prev-btn" class="nav-arrow left-arrow" onclick="prevCard()">&#9664;</button>
+<button id="next-btn" class="nav-arrow right-arrow" onclick="nextCard()">&#9654;</button>
+<style>
+    /* Full Page Styling */
+    /* Full Page Styling */
+/*body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(120deg, #f4f4f4, #e0e0e0);
+    margin: 0;
+    flex-direction: column;
+    overflow: hidden;
+}*/
+
+/* Title Styling */
+.title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Flashcard Container */
+.fflashcard-container {
+    position: relative;
+    width: 400px;
+    min-height: 350px;
+    max-height: 600px;
+    perspective: 1000px;
+    align-items: center;
+    margin: auto;
+}
+
+/* Flashcard Styling */
+.flashcard {
+    width: 100%;
+    height: 100%;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    display: none; /* Hide all except the first one */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease-in-out, opacity 0.3s ease-in-out;
+    overflow-y: auto;
+}
+
+.flashcard:first-child {
+    display: flex; /* Show first card initially */
+}
+
+/* Topic Styling (Centered & Separated) */
+.flashcard-topic {
+    font-size: 24px;
+    color: #0077cc;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 25px; /* Increased space */
+}
+
+/* Summary Styling (Justified) */
+.flashcard-summary {
+    font-size: 18px;
+    text-align: justify;
+    color: #555;
+    line-height: 1.6;
+    padding: 0 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Navigation Arrows */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #0077cc;
+    border: none;
+    font-size: 35px;
+    cursor: pointer;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background 0.3s;
+    z-index: 10;
+}
+
+/* Left Arrow Position */
+.left-arrow {
+    left: -50px;
+}
+
+/* Right Arrow Position */
+.right-arrow {
+    right: -50px;
+}
+
+/* Arrow Hover Effect */
+.nav-arrow:hover {
+    background: #005a99;
+}
+
+</style>
+
+<script>
+    let currentIndex = 0;
+    let flashcards = document.querySelectorAll(".flashcard");
+
+    function showFlashcard(index, direction = "right") {
+        if (flashcards.length === 0) return;
+
+        let currentCard = flashcards[currentIndex];
+        let nextCard = flashcards[index];
+
+        // Exit if there's no next card
+        if (!nextCard) return;
+
+        // Add exit animation to current card
+        currentCard.style.transform = direction === "right" ? "rotateY(90deg)" : "rotateY(-90deg)";
+        currentCard.style.opacity = "0";
+
+        setTimeout(() => {
+            // Hide current card
+            currentCard.style.display = "none";
+            currentCard.style.transform = "rotateY(0deg)"; // Reset rotation
+
+            // Show next card
+            nextCard.style.display = "flex";
+            nextCard.style.opacity = "0";
+            nextCard.style.transform = direction === "right" ? "rotateY(-90deg)" : "rotateY(90deg)";
+
+            setTimeout(() => {
+                nextCard.style.opacity = "1";
+                nextCard.style.transform = "rotateY(0deg)";
+            }, 200);
+        }, 200);
+
+        currentIndex = index;
+    }
+
+    function prevCard() {
+        if (currentIndex > 0) {
+            showFlashcard(currentIndex - 1, "left");
+        }
+    }
+
+    function nextCard() {
+        if (currentIndex < flashcards.length - 1) {
+            showFlashcard(currentIndex + 1, "right");
+        }
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "ArrowRight") {
+            nextCard();
+        } else if (event.key === "ArrowLeft") {
+            prevCard();
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        showFlashcard(0); // Show the first card initially
+    });
+</script>
+
+
+{% endblock content %}
