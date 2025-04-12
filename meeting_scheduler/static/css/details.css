@@ -1,0 +1,147 @@
+.pbody,.container {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 91.1vh; /* 👈 fix height */
+    background: #f5f5f5;
+}
+
+.meeting-card {
+    max-width: 600px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    padding: 40px; /* 👈 reduced padding */
+    text-align: center;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+    /* Title */
+    .meeting-title {
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 20px;
+    }
+
+    /* Meeting Details */
+    .meeting-info p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .icon {
+        color: #007bff;
+        margin-right: 8px;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .status-badge.upcoming {
+        background-color: #28a745;
+    }
+    .status-badge.completed {
+        background-color: #28a745;
+    }
+    .status-badge.ongoing {
+        background-color: #ffc107;
+    }
+
+    .status-badge.canceled {
+        background-color: #dc3545;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        padding: 12px 18px;
+        font-size: 16px;
+        border-radius: 30px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+
+    .join-btn {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .join-btn:hover {
+        background: linear-gradient(135deg, #20c997, #28a745);
+        box-shadow: 0px 4px 10px rgba(40, 167, 69, 0.3);
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .action-btn {
+        flex: 1;
+        max-width: 140px;
+    }
+
+    .edit-btn {
+        background: linear-gradient(135deg, #007bff, #6610f2);
+    }
+
+    .edit-btn:hover {
+        background: linear-gradient(135deg, #6610f2, #007bff);
+        box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.3);
+    }
+
+    .delete-btn {
+        background: linear-gradient(135deg, #dc3545, #ff073a);
+    }
+
+    .delete-btn:hover {
+        background: linear-gradient(135deg, #ff073a, #dc3545);
+        box-shadow: 0px 4px 10px rgba(220, 53, 69, 0.3);
+    }
+
+    .cancel-btn {
+        background: linear-gradient(135deg, #fd7e14, #ff4500);
+    }
+
+    .cancel-btn:hover {
+        background: linear-gradient(135deg, #ff4500, #fd7e14);
+        box-shadow: 0px 4px 10px rgba(253, 126, 20, 0.3);
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, #6c757d, #343a40);
+    }
+
+    .back-btn:hover {
+        background: linear-gradient(135deg, #343a40, #6c757d);
+        box-shadow: 0px 4px 10px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .button-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+

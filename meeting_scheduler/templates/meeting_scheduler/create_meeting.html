@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="/static/css/create_meetings.css">
+<style>
+    form {
+        max-width:95%;
+        margin: 0 auto;
+      }
+      
+      .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+      }
+      
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      
+      .error-message {
+        display: block;
+        margin-top: 5px;
+        font-size: 13px;
+        color: red;
+      }
+      
+</style>
+<h2>Create a New Meeting</h2>
+
+<!-- Meeting Form -->
+<form id="meetingForm" method="POST" action="{% url 'meeting_scheduler:create_meeting' %}">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_title">Title:</label>
+        {{ form.title }}
+    </div>
+
+    <div class="form-group">
+        <label for="id_description">Description:</label>
+        {{ form.description }}
+    </div>
+
+    <div class="form-group">
+        <label for="id_scheduled_time">Scheduled Time:</label>
+        {{ form.scheduled_time }}
+        <span class="error-message" id="scheduledTimeError" style="color: red; display: none;"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="id_end_time">End Time:</label>
+        {{ form.end_time }}
+        <span class="error-message" id="endTimeError" style="color: red; display: none;"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="id_meeting_link">Meeting Link:</label>
+        {{ form.meeting_link }}
+    </div>
+
+    <div class="form-group">
+        <label for="id_participants">Participants:</label>
+        {{ form.participants }}
+    </div>
+
+    <button type="submit" id="submitButton">Create Meeting</button>
+</form>
+
+<!-- Success and Error Messages -->
+<p id="successMessage" style="color: green; display: none;">Meeting created successfully!</p>
+<p id="errorMessage" style="color: red; display: none;"></p>
+
+<!-- JavaScript for Validation & AJAX Submission -->
+<script>
+document.getElementById("meetingForm").addEventListener("submit", function(event) {
+    event.preventDefault();  // Prevent default form submission
+
+    let form = this;
+    let formData = new FormData(form);
+    let submitButton = document.getElementById("submitButton");
+
+    let scheduledTimeInput = document.getElementById("id_scheduled_time").value;
+    let endTimeInput = document.getElementById("id_end_time").value;
+
+    let scheduledTime = scheduledTimeInput ? new Date(scheduledTimeInput) : null;
+    let endTime = endTimeInput ? new Date(endTimeInput) : null;
+    let now = new Date();
+
+    let hasError = false;
+
+    // Validate scheduled time (must be in the future)
+    if (!scheduledTime || scheduledTime <= now) {
+        document.getElementById("scheduledTimeError").innerText = "Scheduled time must be in the future.";
+        document.getElementById("scheduledTimeError").style.display = "inline";
+        hasError = true;
+    } else {
+        document.getElementById("scheduledTimeError").style.display = "none";
+    }
+
+    // Validate end time (must be after scheduled time)
+    if (!endTime || endTime <= scheduledTime) {
+        document.getElementById("endTimeError").innerText = "End time must be after scheduled time.";
+        document.getElementById("endTimeError").style.display = "inline";
+        hasError = true;
+    } else {
+        document.getElementById("endTimeError").style.display = "none";
+    }
+
+    if (hasError) return;  // Stop form submission if errors exist
+
+    // Disable button to prevent multiple submissions
+    submitButton.disabled = true;
+    submitButton.innerText = "Creating...";
+
+    fetch("{% url 'meeting_scheduler:create_meeting' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+            "X-CSRFToken": formData.get("csrfmiddlewaretoken")
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("successMessage").style.display = "block";
+            document.getElementById("errorMessage").style.display = "none";
+            form.reset();  // Clear form after success
+            window.location.href=data.redirect_url;
+        } else {
+            document.getElementById("successMessage").style.display = "none";
+            document.getElementById("errorMessage").innerHTML = typeof data.error === "string" 
+                ? data.error 
+                : Object.values(data.error).join("<br>");
+            document.getElementById("errorMessage").style.display = "block";
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        document.getElementById("errorMessage").innerText = "An unexpected error occurred!";
+        document.getElementById("errorMessage").style.display = "block";
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.innerText = "Create Meeting";
+    });
+});
+</script>
+
+{% endblock %}

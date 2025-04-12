@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="/static/css/all_meetings.css">
+
+<!-- Search and Filter Form -->
+<form id="searchForm">
+    <input type="text" id="searchQuery" name="q" placeholder="Search by title or host..." value="{{ request.GET.q }}">
+    
+    <select id="statusFilter" name="status">
+        <option value="">All</option>
+        <option value="Upcoming">Upcoming</option>
+        <option value="Ongoing">Ongoing</option>
+        <option value="Completed">Completed</option>
+        <option value="Canceled">Canceled</option>
+    </select>
+
+    <select id="sortFilter" name="sort_by">
+        <option value="">Sort By</option>
+        <option value="scheduled_time_asc">Scheduled Time (Earliest First)</option>
+        <option value="scheduled_time_desc">Scheduled Time (Latest First)</option>
+        <option value="title_asc">Title (A-Z)</option>
+        <option value="title_desc">Title (Z-A)</option>
+        <option value="host_asc">Host Name (A-Z)</option>
+        <option value="host_desc">Host Name (Z-A)</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+
+<!-- Meetings List -->
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Host</th>
+            <th>Scheduled Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="meetingList">
+        {% for meeting in meetings %}
+        <tr id="meeting-{{ meeting.id }}" data-meeting-id="{{ meeting.id }}">
+            <td><a href="{% url 'meeting_scheduler:meeting_detail' meeting.id %}">{{ meeting.title }}</a></td>
+            <td>{{ meeting.host }}</td>
+            <td>{{ meeting.scheduled_time|date:"F d, Y h:i A" }}</td>
+
+            <td>{{ meeting.end_time}}</td>
+            <td class="meeting-status">{{ meeting.status }}</td>
+            <td>
+                {% if request.user == meeting.host %}
+                    <a href="{% url 'meeting_scheduler:edit_meeting' meeting.id %}">Edit</a> |
+                    <a href="{% url 'meeting_scheduler:delete_meeting' meeting.id %}" onclick="return confirm('Are you sure?')">Delete</a> |
+                    {% if meeting.status != 'Canceled' %}
+                        <a href="{% url 'meeting_scheduler:cancel_meeting' meeting.id %}" onclick="return confirm('Cancel this meeting?')">Cancel</a>
+                    {% endif %}
+                {% else %}
+                    No actions available
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No meetings found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    var currentUser = "{{ request.user.username }}";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("searchQuery");
+        const statusFilter = document.getElementById("statusFilter");
+        const sortFilter = document.getElementById("sortFilter");
+    
+        // Load saved filters from localStorage
+        searchInput.value = localStorage.getItem("searchQuery") || "";
+        statusFilter.value = localStorage.getItem("statusFilter") || "";
+        sortFilter.value = localStorage.getItem("sortFilter") || "";
+    
+        function getSearchParams() {
+            return {
+                q: searchInput.value.trim(),
+                status: statusFilter.value,
+                sort_by: sortFilter.value
+            };
+        }
+    
+        function updateLocalStorage() {
+            localStorage.setItem("searchQuery", searchInput.value);
+            localStorage.setItem("statusFilter", statusFilter.value);
+            localStorage.setItem("sortFilter", sortFilter.value);
+        }
+    
+        function fetchMeetings() {
+            let searchParams = getSearchParams();
+            let url = `{% url 'meeting_scheduler:get_meetings' %}?q=${encodeURIComponent(searchParams.q)}&status=${encodeURIComponent(searchParams.status)}&sort_by=${encodeURIComponent(searchParams.sort_by)}`;
+    
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                let meetingList = document.getElementById("meetingList");
+                meetingList.innerHTML = ""; // Clear old list
+    
+                if (data.length === 0) {
+                    meetingList.innerHTML = "<tr><td colspan='6'>No meetings found.</td></tr>";
+                    return;
+                }
+    
+                data.forEach(meeting => {
+                    let row = document.createElement("tr");
+                    row.id = `meeting-${meeting.id}`;
+                    row.dataset.meetingId = meeting.id;
+    
+                    //let scheduledTime = new Date(meeting.scheduled_time).toLocaleString();
+                   // let endTime = meeting.end_time !== "N/A" ? new Date(meeting.end_time).toLocaleString() : "N/A";
+                   let scheduledTime = meeting.scheduled_time;
+                    let endTime = meeting.end_time;
+
+    
+                    let actions = "No actions available";
+                    if (meeting.host === currentUser) {
+                        actions = `
+                            ${meeting.cancel_url ? `<a href="${meeting.cancel_url}" onclick="return confirm('Cancel this meeting?')">Cancel</a> |` : ''}
+                            <a href="${meeting.edit_url}">Edit</a> |
+                            <a href="${meeting.delete_url}" onclick="return confirm('Are you sure?')">Delete</a>
+                        `;
+                    }
+    
+                    row.innerHTML = `
+                        <td><a href="${meeting.detail_url}">${meeting.title}</a></td>
+                        <td>${meeting.host}</td>
+                        <td>${scheduledTime}</td>
+                        <td>${endTime}</td>
+                        <td class="meeting-status">${meeting.status}</td>
+                        <td>${actions}</td>
+                    `;
+    
+                    meetingList.appendChild(row);
+                });
+    
+                // Update meeting statuses after fetching
+                updateMeetingStatuses();
+            })
+            .catch(error => console.error("Error fetching meetings:", error));
+        }
+    
+        function updateMeetingStatuses() {
+            fetch("{% url 'meeting_scheduler:update_meeting_status' %}")
+                .then(response => response.json())
+                .then(data => {
+                    data.updated_meetings.forEach(meeting => {
+                        let statusCell = document.querySelector(`#meeting-${meeting.id} .meeting-status`);
+                        if (statusCell) {
+                            statusCell.textContent = meeting.status;
+                        }
+                    });
+                })
+                .catch(error => console.error("Error updating meeting statuses:", error));
+        }
+
+        
+    
+        // Event listeners for search, status, and sort filters
+        searchInput.addEventListener("input", () => {
+            updateLocalStorage();
+            fetchMeetings();
+        });
+    
+        statusFilter.addEventListener("change", () => {
+            updateLocalStorage();
+            fetchMeetings();
+        });
+    
+        sortFilter.addEventListener("change", () => {
+            updateLocalStorage();
+            fetchMeetings();
+        });
+    
+        // Auto-refresh meetings and statuses
+        setInterval(fetchMeetings, 10000);  // Fetch meetings every 10 seconds
+        setInterval(updateMeetingStatuses, 30000);  // Update statuses every 30 seconds
+    
+        // Initial fetch
+        fetchMeetings();
+    });
+    
+</script>
+
+{% endblock %}

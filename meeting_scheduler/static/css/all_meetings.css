@@ -1,0 +1,96 @@
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* Search and Filter Form */
+form#searchForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#searchForm input,
+#searchForm select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#searchForm button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#searchForm button:hover {
+    background-color: #0056b3;
+}
+
+/* Meetings Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Meeting Status Styling */
+.meeting-status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.meeting-status.Upcoming { background-color: #ffc107; color: #fff; }
+.meeting-status.Ongoing { background-color: #28a745; color: #fff; }
+.meeting-status.Completed { background-color: #6c757d; color: #fff; }
+.meeting-status.Canceled { background-color: #dc3545; color: #fff; }
+
+/* Actions Column */
+td a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+td a[onclick] {
+    color: #dc3545;
+}
+
+
