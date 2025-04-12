@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Resources</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/manage_resources.css">
+    <style>
+        form {
+            padding: 10px;
+            margin-left: 5px;
+            border-radius: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+            width: 100%;
+            max-width: 100%; /* Optional: to limit overly wide inputs */
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #34495E;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            border: 1px solid #BDC3C7;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="resource-container">
+        <h2><i class="bi bi-folder-fill"></i> Manage Resources for {{ classroom.title }}</h2>
+        {% if user.role == "Admin" or user.role == "Instructor" %}
+        <!-- 🆕 Add New Resource -->
+        <h3><i class="bi bi-file-earmark-plus"></i> Add New Resource</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }} 
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="submit-btn"><i class="bi bi-plus-circle"></i> Add Resource</button>
+        </form>        
+        {% endif %}
+        <!-- 📂 Existing Resources -->
+        <h3><i class="bi bi-folder"></i> Existing Resources</h3>
+        <div class="resource-grid">
+            {% for resource in resources %}
+                <div class="resource-card">
+                    <!-- 📌 File Type Icon -->
+                    {% if resource.file %}
+                        {% if resource.file.url|lower|slice:'-4:' == '.pdf' %}
+                            <i class="bi bi-file-earmark-pdf file-icon" style="color: red;"></i>
+                        {% elif resource.file.url|lower|slice:'-4:' == '.jpg' or resource.file.url|lower|slice:'-5:' == '.jpeg' or resource.file.url|lower|slice:'-4:' == '.png' %}
+                            <i class="bi bi-file-earmark-image file-icon"></i>
+                        {% elif resource.file.url|lower|slice:'-4:' == '.mp4' %}
+                            <i class="bi bi-file-earmark-play file-icon" style="color: #E67E22;"></i>
+                        {% else %}
+                            <i class="bi bi-file-earmark file-icon"></i>
+                        {% endif %}
+                    {% elif resource.link %}
+                        <i class="bi bi-link file-icon" style="color: #8E44AD;"></i>
+                    {% else %}
+                        <i class="bi bi-file-earmark file-icon"></i>
+                    {% endif %}
+
+                    <!-- 🏷 File Name -->
+                    <div class="resource-title">{{ resource.title }}</div>
+
+                    <!-- ⚡ Action Buttons -->
+                    <div class="resource-actions">
+                        {% if resource.file %}
+                            <a href="{{ resource.file.url }}" target="_blank" class="download-btn">Download</a>
+                        {% elif resource.link %}
+                            <a href="{{ resource.link }}" target="_blank" class="download-btn">Open</a>
+                        {% endif %}
+                        {% if user.role == "Admin" or user.role == 'Instructor' %}
+                        <a href="{% url 'delete_resource' resource.id %}" class="delete-btn">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p>No resources added yet.</p>
+            {% endfor %}
+        </div>
+
+        <!-- 🔙 Back to Classrooms -->
+        <a class="back-link" href="{% url 'classroom_list' %}"><i class="bi bi-arrow-left"></i> Back to Classrooms</a>
+    </div>
+</body>
+</html>
+{% endblock %}

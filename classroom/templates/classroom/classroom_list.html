@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/css/classroom1.css">
+<div class="classroom-container">
+    <h1 class="title"><i class="bi bi-house-door"></i> Your Classrooms</h1>
+
+    {% if user.is_authenticated and user.role in "Instructor Admin" %}
+    <div class="actions">
+        <a href="{% url 'create_classroom' %}" class="btn-create">
+            <i class="bi bi-plus-lg"></i> Create Classroom
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="classroom-list">
+        {% for classroom in classrooms %}
+            <div class="classroom-card">
+                <div class="classroom-header">
+                    <img src="/static/images/meeting.png" alt="Instructor" class="avatar">
+                    <div class="classroom-info">
+                        <h2 class="classroom-title">{{ classroom.title }}</h2>
+                        <p class="instructor-name">{{ classroom.instructor.username }}</p>
+                    </div>
+                </div>
+                <div class="classroom-actions">
+                    {% if user.is_authenticated and user.role in "Instructor,Admin" %}
+
+                        <a href="{% url 'edit_classroom' classroom.id %}" class="btn btn-edit">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_classroom' classroom.id %}" class="btn btn-delete" onclick="return confirm('Are you sure?')">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                        <a href="{% url 'invite_student' classroom.id %}" class="btn btn-invite">
+                            <i class="bi bi-people"></i> Invite
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'manage_resources' classroom.id %}" class="btn btn-resources">
+                        <i class="bi bi-folder"></i> Resources
+                    </a>
+                    <a href="{% url 'chatroom:chatroom_view' classroom.id %}" class="btn btn-chat">
+                        <i class="bi bi-chat-dots"></i> Chat
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+

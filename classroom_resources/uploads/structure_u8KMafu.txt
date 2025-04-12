@@ -1,0 +1,455 @@
+C:\Users\user\virtual_classroom>tree /f
+Folder PATH listing
+Volume serial number is 6A4C-B844
+C:.
+│   db.sqlite3
+│   manage.py
+│   structure.txt
+│   task_list.txt
+│
+├───calendarapp
+│   │   admin.py
+│   │   apps.py
+│   │   models.py
+│   │   tests.py
+│   │   urls.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   ├───migrations
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__
+│   │           __init__.cpython-313.pyc
+│   │
+│   ├───static
+│   │   └───css
+│   │           calendar.css
+│   │
+│   ├───templates
+│   │   └───calendarapp
+│   │           calendar.html
+│   │
+│   └───__pycache__
+│           admin.cpython-313.pyc
+│           apps.cpython-313.pyc
+│           models.cpython-313.pyc
+│           urls.cpython-313.pyc
+│           views.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+├───chatroom
+│   │   admin.py
+│   │   apps.py
+│   │   consumers.py
+│   │   models.py
+│   │   routing.py
+│   │   tests.py
+│   │   urls.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   ├───migrations
+│   │   │   0001_initial.py
+│   │   │   0002_chatmessage_is_deleted.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__
+│   │           0001_initial.cpython-313.pyc
+│   │           0002_chatmessage_is_deleted.cpython-313.pyc
+│   │           __init__.cpython-313.pyc
+│   │
+│   ├───static
+│   │   └───css
+│   │           chatroom.css
+│   │
+│   ├───templates
+│   │       chatroom.html
+│   │
+│   └───__pycache__
+│           admin.cpython-313.pyc
+│           apps.cpython-313.pyc
+│           models.cpython-313.pyc
+│           urls.cpython-313.pyc
+│           views.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+├───classroom
+│   │   admin.py
+│   │   apps.py
+│   │   forms.py
+│   │   models.py
+│   │   tests.py
+│   │   urls.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   ├───migrations
+│   │   │   0001_initial.py
+│   │   │   0002_classroomresource.py
+│   │   │   0003_chatmessage.py
+│   │   │   0004_delete_chatmessage.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__
+│   │           0001_initial.cpython-313.pyc
+│   │           0002_classroomresource.cpython-313.pyc
+│   │           0003_chatmessage.cpython-313.pyc
+│   │           0004_delete_chatmessage.cpython-313.pyc
+│   │           __init__.cpython-313.pyc
+│   │
+│   ├───static
+│   │   └───css
+│   │           classroom.css
+│   │           create_classroom.css
+│   │           edit_classroom.css
+│   │           invite_student.css
+│   │           manage_resources.css
+│   │
+│   ├───templates
+│   │   └───classroom
+│   │           classroom_list.html
+│   │           create_classroom.html
+│   │           delete_classroom.html
+│   │           edit_classroom.html
+│   │           invite_student.html
+│   │           manage_resources.html
+│   │
+│   └───__pycache__
+│           admin.cpython-313.pyc
+│           apps.cpython-313.pyc
+│           forms.cpython-313.pyc
+│           models.cpython-313.pyc
+│           urls.cpython-313.pyc
+│           views.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+├───classroom_resources
+│   │   A_Comprehensive_Study_on_LMS_Past_and_Present_first_1.docx
+│   │
+│   ├───3dmodels
+│   │       DNA.glb
+│   │       DNA.obj
+│   │       Duck.glb
+│   │       human-tooth.glb
+│   │       sample_48.glb
+│   │       scene.gltf
+│   │       uploads_files_5484837_WoodenVillageHouseGLB.glb
+│   │       Wooden_Village_House_gltf.gltf
+│   │
+│   ├───chat_attachments
+│   │       DS-Forouzan.pdf
+│   │       Screenshot_2025-03-05_185810.png
+│   │       Screenshot_2025-03-05_185810_5XakyWG.png
+│   │       Unification.pdf
+│   │
+│   └───classroom_resources
+│           DS-Forouzan.pdf
+│           Duck.glb
+│           Topics_for_EmBleed.docx
+│
+├───dashboard
+│   │   admin.py
+│   │   apps.py
+│   │   forms.py
+│   │   models.py
+│   │   tests.py
+│   │   urls.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   ├───migrations
+│   │   │   0001_initial.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__
+│   │           0001_initial.cpython-313.pyc
+│   │           __init__.cpython-313.pyc
+│   │
+│   ├───static
+│   │   ├───css
+│   │   │       add_user.css
+│   │   │       base.css
+│   │   │       dashboard.css
+│   │   │       edit_user.css
+│   │   │       landing.css
+│   │   │       login.css
+│   │   │       style.css
+│   │   │       user_list.css
+│   │   │
+│   │   └───images
+│   │           landing.png
+│   │           landing.svg
+│   │
+│   ├───templates
+│   │   │   add_user.html
+│   │   │   admin_dashboard.html
+│   │   │   base.html
+│   │   │   edit_user.html
+│   │   │   instructor_dashboard.html
+│   │   │   landing.html
+│   │   │   login.html
+│   │   │   student_dashboard.html
+│   │   │   user_list.html
+│   │   │
+│   │   └───dashboard
+│   └───__pycache__
+│           admin.cpython-313.pyc
+│           apps.cpython-313.pyc
+│           forms.cpython-313.pyc
+│           models.cpython-313.pyc
+│           urls.cpython-313.pyc
+│           utils.cpython-313.pyc
+│           views.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+├───meeting_scheduler
+│   │   admin.py
+│   │   apps.py
+│   │   forms.py
+│   │   models.py
+│   │   tests.py
+│   │   urls.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   ├───migrations
+│   │   │   0001_initial.py
+│   │   │   0002_meeting_end_time.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__
+│   │           0001_initial.cpython-313.pyc
+│   │           0002_meeting_end_time.cpython-313.pyc
+│   │           __init__.cpython-313.pyc
+│   │
+│   ├───static
+│   │   └───css
+│   │           all_meetings.css
+│   │           create_meetings.css
+│   │           edit_meetings.css
+│   │           meeting_details.css
+│   │
+│   ├───templates
+│   │   └───meeting_scheduler
+│   │           all_meetings.html
+│   │           create_meeting.html
+│   │           edit_meeting.html
+│   │           meeting_detail.html
+│   │
+│   └───__pycache__
+│           admin.cpython-313.pyc
+│           apps.cpython-313.pyc
+│           forms.cpython-313.pyc
+│           models.cpython-313.pyc
+│           urls.cpython-313.pyc
+│           views.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+├───staticfiles
+│   ├───admin
+│   │   ├───css
+│   │   │   │   autocomplete.css
+│   │   │   │   base.css
+│   │   │   │   changelists.css
+│   │   │   │   dark_mode.css
+│   │   │   │   dashboard.css
+│   │   │   │   forms.css
+│   │   │   │   login.css
+│   │   │   │   nav_sidebar.css
+│   │   │   │   responsive.css
+│   │   │   │   responsive_rtl.css
+│   │   │   │   rtl.css
+│   │   │   │   unusable_password_field.css
+│   │   │   │   widgets.css
+│   │   │   │
+│   │   │   └───vendor
+│   │   │       └───select2
+│   │   │               LICENSE-SELECT2.md
+│   │   │               select2.css
+│   │   │               select2.min.css
+│   │   │
+│   │   ├───img
+│   │   │   │   calendar-icons.svg
+│   │   │   │   icon-addlink.svg
+│   │   │   │   icon-alert.svg
+│   │   │   │   icon-calendar.svg
+│   │   │   │   icon-changelink.svg
+│   │   │   │   icon-clock.svg
+│   │   │   │   icon-deletelink.svg
+│   │   │   │   icon-hidelink.svg
+│   │   │   │   icon-no.svg
+│   │   │   │   icon-unknown-alt.svg
+│   │   │   │   icon-unknown.svg
+│   │   │   │   icon-viewlink.svg
+│   │   │   │   icon-yes.svg
+│   │   │   │   inline-delete.svg
+│   │   │   │   LICENSE
+│   │   │   │   README.txt
+│   │   │   │   search.svg
+│   │   │   │   selector-icons.svg
+│   │   │   │   sorting-icons.svg
+│   │   │   │   tooltag-add.svg
+│   │   │   │   tooltag-arrowright.svg
+│   │   │   │
+│   │   │   └───gis
+│   │   │           move_vertex_off.svg
+│   │   │           move_vertex_on.svg
+│   │   │
+│   │   └───js
+│   │       │   actions.js
+│   │       │   autocomplete.js
+│   │       │   calendar.js
+│   │       │   cancel.js
+│   │       │   change_form.js
+│   │       │   core.js
+│   │       │   filters.js
+│   │       │   inlines.js
+│   │       │   jquery.init.js
+│   │       │   nav_sidebar.js
+│   │       │   popup_response.js
+│   │       │   prepopulate.js
+│   │       │   prepopulate_init.js
+│   │       │   SelectBox.js
+│   │       │   SelectFilter2.js
+│   │       │   theme.js
+│   │       │   unusable_password_field.js
+│   │       │   urlify.js
+│   │       │
+│   │       ├───admin
+│   │       │       DateTimeShortcuts.js
+│   │       │       RelatedObjectLookups.js
+│   │       │
+│   │       └───vendor
+│   │           ├───jquery
+│   │           │       jquery.js
+│   │           │       jquery.min.js
+│   │           │       LICENSE.txt
+│   │           │
+│   │           ├───select2
+│   │           │   │   LICENSE.md
+│   │           │   │   select2.full.js
+│   │           │   │   select2.full.min.js
+│   │           │   │
+│   │           │   └───i18n
+│   │           │           af.js
+│   │           │           ar.js
+│   │           │           az.js
+│   │           │           bg.js
+│   │           │           bn.js
+│   │           │           bs.js
+│   │           │           ca.js
+│   │           │           cs.js
+│   │           │           da.js
+│   │           │           de.js
+│   │           │           dsb.js
+│   │           │           el.js
+│   │           │           en.js
+│   │           │           es.js
+│   │           │           et.js
+│   │           │           eu.js
+│   │           │           fa.js
+│   │           │           fi.js
+│   │           │           fr.js
+│   │           │           gl.js
+│   │           │           he.js
+│   │           │           hi.js
+│   │           │           hr.js
+│   │           │           hsb.js
+│   │           │           hu.js
+│   │           │           hy.js
+│   │           │           id.js
+│   │           │           is.js
+│   │           │           it.js
+│   │           │           ja.js
+│   │           │           ka.js
+│   │           │           km.js
+│   │           │           ko.js
+│   │           │           lt.js
+│   │           │           lv.js
+│   │           │           mk.js
+│   │           │           ms.js
+│   │           │           nb.js
+│   │           │           ne.js
+│   │           │           nl.js
+│   │           │           pl.js
+│   │           │           ps.js
+│   │           │           pt-BR.js
+│   │           │           pt.js
+│   │           │           ro.js
+│   │           │           ru.js
+│   │           │           sk.js
+│   │           │           sl.js
+│   │           │           sq.js
+│   │           │           sr-Cyrl.js
+│   │           │           sr.js
+│   │           │           sv.js
+│   │           │           th.js
+│   │           │           tk.js
+│   │           │           tr.js
+│   │           │           uk.js
+│   │           │           vi.js
+│   │           │           zh-CN.js
+│   │           │           zh-TW.js
+│   │           │
+│   │           └───xregexp
+│   │                   LICENSE.txt
+│   │                   xregexp.js
+│   │                   xregexp.min.js
+│   │
+│   └───css
+│           calendar.css
+│           classroom.css
+│           dashboard.css
+│           login.css
+│           sidebar.css
+│           style.css
+│
+├───threeDmodels
+│   │   admin.py
+│   │   apps.py
+│   │   forms.py
+│   │   models.py
+│   │   tests.py
+│   │   urls.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   ├───migrations
+│   │   │   0001_initial.py
+│   │   │   __init__.py
+│   │   │
+│   │   └───__pycache__
+│   │           0001_initial.cpython-313.pyc
+│   │           __init__.cpython-313.pyc
+│   │
+│   ├───static
+│   │   └───css
+│   │           model.css
+│   │
+│   ├───templates
+│   │       model_list.html
+│   │       upload_model.html
+│   │       view_model.html
+│   │
+│   └───__pycache__
+│           admin.cpython-313.pyc
+│           apps.cpython-313.pyc
+│           forms.cpython-313.pyc
+│           models.cpython-313.pyc
+│           urls.cpython-313.pyc
+│           views.cpython-313.pyc
+│           __init__.cpython-313.pyc
+│
+└───virtual_classroom
+    │   asgi.py
+    │   settings.py
+    │   urls.py
+    │   wsgi.py
+    │   __init__.py
+    │
+    └───__pycache__
+            settings.cpython-313.pyc
+            urls.cpython-313.pyc
+            wsgi.cpython-313.pyc
+            __init__.cpython-313.pyc

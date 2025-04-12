@@ -1,0 +1,167 @@
+/* .classroom-container {
+        max-width: 99%;
+        margin: 30px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-left:-10px;
+    }
+    
+    /* Title */
+    .title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #1D3557;
+    }
+    
+    /* Create Classroom Button */
+    .actions {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+    
+    .btn-create {
+        background: #4CAF50;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-create:hover {
+        background: #45A049;
+    }
+    
+    /* Classroom List */
+    .classroom-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* Classroom Card */
+    .classroom-card {
+        display: flex;
+        flex-direction: column;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: 0.3s ease-in-out;
+    }
+    
+    .classroom-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Classroom Header */
+    .classroom-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    /* Instructor Avatar */
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+    
+    .classroom-info {
+        flex: 1;
+    }
+    
+    .classroom-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .instructor-name {
+        font-size: 1rem;
+        color: #666;
+    }
+    
+    /* Classroom Actions */
+    .classroom-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 1rem;
+        text-decoration: none;
+        color: white;
+        transition: 0.3s ease;
+    }
+    
+    /* Buttons with different colors */
+    .btn-edit {
+        background: #007bff;
+    }
+    
+    .btn-delete {
+        background: #dc3545;
+    }
+    
+    .btn-invite {
+        background: #28a745;
+    }
+    
+    .btn-resources {
+        background: #ffc107;
+        color: black;
+    }
+    
+    .btn-chat {
+        background: #6f42c1;
+    }
+    
+    /* Button Hover Effects */
+    .btn:hover {
+        opacity: 0.85;
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .classroom-container {
+        padding: 20px;
+    }
+
+    .classroom-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .actions-cell {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .actions {
+        text-align: center;
+    }
+}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Classroom</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/edit_classroom.css">
+    <style>
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="pbody">
+    <div class="edit-classroom-container">
+        <h1><i class="bi bi-pencil-square"></i> Edit Classroom</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.field.widget.input_type == "checkbox" %}
+                    <div class="checkbox-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        <div class="checkbox-option">
+                            {{ field }}
+                        </div>
+                    </div>
+                {% else %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>                
+                {% endif %}
+            {% endfor %}
+            <button type="submit"><i class="bi bi-save"></i> Save Changes</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+{% endblock %}

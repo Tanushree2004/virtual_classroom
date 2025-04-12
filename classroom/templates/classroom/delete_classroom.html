@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Classroom</title>
+</head>
+<body>
+    <h1>Are you sure you want to delete "{{ classroom.title }}"?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+    </form>
+    <a href="{% url 'classroom_list' %}">Cancel</a>
+</body>
+</html>
+{% endblock %}
