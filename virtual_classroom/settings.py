@@ -8,7 +8,7 @@ GROQ_API_KEY = "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"
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 SECRET_KEY = 'django-insecure-pj!^xdk8d7!8#29hz@i&l$zu2itim9g6u(@c+_emmj!s3me2pa'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -89,10 +89,12 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
-STATIC_ROOT =  BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'dashboard.CustomUser'
 STATIC_URL = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "dashboard/static",
     BASE_DIR / "classroom/static",
