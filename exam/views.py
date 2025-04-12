@@ -244,7 +244,8 @@ def submit_exam(request, exam_id):
     total_mcq = 0
     mcq_answers = {}
     descriptive_answers = {}
-    now = datetime.now()
+    #now = datetime.now()
+    now = timezone.now()
     duration = (
         datetime.combine(exam.deadline, exam.end_duration)- max(datetime.combine(exam.deadline, exam.start_duration),now)
     ).total_seconds()
