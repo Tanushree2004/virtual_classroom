@@ -1,6 +1,8 @@
 
 // WebSocket connection for managing participants and messages
-let participantSocket = new WebSocket(`ws://${window.location.host}/ws/conference_meeting/${roomId}/`);
+//let participantSocket = new WebSocket(`ws://${window.location.host}/ws/conference_meeting/${roomId}/`);
+let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+let participantSocket = new WebSocket(`${ws_scheme}://${window.location.host}/ws/conference_meeting/${roomId}/`);
 
 let participantDisplayName = sessionStorage.getItem('display_name');
 if (!participantDisplayName) {
