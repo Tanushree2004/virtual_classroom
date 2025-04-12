@@ -8,7 +8,16 @@ GROQ_API_KEY = "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"
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 SECRET_KEY = 'django-insecure-pj!^xdk8d7!8#29hz@i&l$zu2itim9g6u(@c+_emmj!s3me2pa'
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    "https://web-production-629e0.up.railway.app",
+]
+#ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'web-production-629e0.up.railway.app',
+    'localhost',  # If you're testing locally too
+    '127.0.0.1',
+]
+
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
