@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Assignment{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/create_form_style.css' %}">
+
+<div class="assignment-form-container">
+    <h2 class="heading">Create New Assignment</h2>
+
+    {% if user.role == "Instructor" %}
+    <form method="POST" action="{% url 'assignments_app:create_assignment' %}">
+        {% csrf_token %}
+
+        <label for="title">Assignment Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <!--label for="class_group">Class Group:</label>
+        <input type="text" id="group" name="group" required-->
+        <label for="class_group">Class Group:</label>
+        <select id="group" name="group" required>
+            <option value="" disabled selected>-- Select a Classroom --</option>
+            {% for classroom in classrooms %}
+            <option value="{{ classroom.title }}">{{ classroom.title }}</option>
+            {% endfor %}
+        </select>
+
+
+        <label for="deadline">Deadline:</label>
+        <input type="datetime-local" id="deadline" name="deadline" required>
+
+
+        <button type="submit" class="submit-btn">Create Assignment</button>
+    </form>
+    {% else %}
+    <p class="error-message">❌ You do not have permission to create assignments.</p>
+    {% endif %}
+</div>
+{% endblock %}

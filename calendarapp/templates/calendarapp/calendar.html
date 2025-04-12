@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="calendar-page">
+    <div class="calendar-header">
+        <h2>Calendar</h2>
+        {% if user.role == "Admin" or user.role == "Instructor" %}
+        <a href="{% url 'meeting_scheduler:create_meeting' %}" class="btn-schedule">+ New Meeting</a>
+        {% endif %}
+    </div>
+    <div id="calendar-container">
+        <div id="calendar"></div>
+    </div>
+</div>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<style>
+.calendar-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+/* 🟣 Modern Header */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+}
+/* ✨ Title Styling */
+.calendar-header h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+/* 🟢 New Meeting Button */
+.btn-schedule {
+    background: #0078D4;
+    color: white;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+.btn-schedule:hover {
+    background: #005a9e;
+    transform: scale(1.05);
+}
+/* 📅 Calendar Container */
+#calendar-container {
+    width: 98%;
+    max-width: 1400px;
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+    margin-top: 25px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+/* 🔹 Toolbar - More Space & Centered */
+.fc-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: white;
+    border-bottom: 2px solid #E0E0E0;
+}
+/* 🟢 Toolbar Buttons - Modern Look */
+.fc-toolbar .fc-button {
+    padding: 12px 18px !important;
+    font-size: 14px !important;
+    font-weight: 600;
+    border-radius: 8px !important;
+    background: #E0E0E0;
+    color: black;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.fc-toolbar .fc-button:hover {
+    background: #d0d0d0;
+}
+
+/* 🔘 Improved Today & Navigation Buttons */
+.fc-prev-button, .fc-next-button, .fc-today-button {
+    margin-right: 1rem !important;
+}
+
+/* 🟦 Active Button Styling */
+.fc-button-primary:disabled {
+    background: #0078D4 !important;
+    color: white !important;
+}
+
+/* 🎨 Meeting Styling */
+.fc-event {
+    border-radius: 8px !important;
+    padding: 5px !important;
+    font-size: 13px !important;
+    font-weight: 500;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🎨 Meetings Hosted by User */
+.fc-event.hosted {
+    background-color: #0078D4 !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* 🎨 Meetings by Others */
+.fc-event.not-hosted {
+    background-color: #ccc !important;
+    color: #333 !important;
+    border: none !important;
+}
+
+/* ✨ Meeting Hover Effect */
+.fc-event:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+    transition: 0.2s;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 1024px) {
+    .calendar-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    #calendar-container {
+        width: 100%;
+    }
+
+    .fc-toolbar {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .fc-toolbar .fc-button-group {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-header h2 {
+        font-size: 20px;
+    }
+
+    .btn-schedule {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .fc-toolbar .fc-button {
+        font-size: 13px !important;
+    }
+}
+
+
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            selectable: true,
+            editable: true,
+            droppable: false,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: "{% url 'get_meetings' %}",
+
+            eventDidMount: function(info) {
+                let eventHostId = info.event.extendedProps.host_id;
+                let loggedInUserId = "{{ request.user.id }}";
+
+                if (eventHostId == loggedInUserId) {
+                    info.el.classList.add("hosted");
+                } else {
+                    info.el.classList.add("not-hosted");
+                    info.el.classList.add("non-draggable");
+                    info.event.setProp('editable', false);
+                }
+            },
+
+            eventDrop: function(info) {
+                let eventId = info.event.id;
+                let newDate = info.event.start.toISOString().split('T')[0];  
+                let eventHostId = info.event.extendedProps.host_id;
+                let loggedInUserId = "{{ request.user.id }}";
+
+                if (eventHostId != loggedInUserId) {
+                    alert("You are not the host of this meeting!");
+                    info.revert();
+                    return;
+                }
+
+                $.ajax({
+                    url: "{% url 'update_meeting_date' %}",
+                    type: 'POST',
+                    data: {
+                        'meeting_id': eventId,
+                        'new_date': newDate,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        alert('Meeting updated successfully!');
+                    },
+                    error: function(xhr) {
+                        alert('Error updating meeting.');
+                        info.revert();
+                    }
+                });
+            },
+
+            eventClick: function(info) {
+                info.jsEvent.preventDefault();
+                window.location.href = info.event.url;
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+{% endblock %}

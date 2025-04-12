@@ -1,0 +1,190 @@
+
+    .chat-container {
+        width: 100%;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-header {
+        display: flex;
+        align-items: center;
+        background: #075e54;
+        color: white;
+        padding: 10px 15px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius:5px;
+    }
+
+    .back-icon {
+        width: 24px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        background: #e8eaf0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        padding: 10px;
+        border-radius: 18px;
+        max-width: 70%;
+        margin-bottom: 10px;
+        word-wrap: break-word;
+        position: relative;
+    }
+
+    .sent {
+        background: #dcf8c6;
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .received {
+        background: white;
+        align-self: flex-start;
+    }
+
+    .chat-image {
+        max-width: 200px;
+        border-radius: 10px;
+        margin-top: 5px;
+    }
+
+    .pdf-preview {
+        display: flex;
+        align-items: center;
+        background: #f1f1f1;
+        padding: 8px;
+        border-radius: 10px;
+        margin-top: 5px;
+    }
+
+    .pdf-icon {
+        width: 24px;
+        margin-right: 10px;
+    }
+
+    .pdf-link {
+        text-decoration: none;
+        color: #007bff;
+    }
+        .image-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+    
+        .viewer-image {
+            max-width: 90%;
+            max-height: 90%;
+        }
+    
+        .close-viewer {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+          font-weight: bold;
+        }
+        .attach-btn {
+            font-size: 22px;
+            cursor: pointer;
+            margin-right: 10px;
+            color: #075E54;
+        }
+    
+        button {
+            background: #25D366;
+            border: none;
+            padding: 8px 12px;
+            font-size: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            margin-left: 8px;
+        }
+        #chat-form {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 25px;
+            padding: 8px;
+            margin: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 📎 Attachment Icon */
+        .file-label {
+            cursor: pointer;
+            padding: 5px;
+            margin-right: 8px;
+        }
+        
+        .file-label img {
+            width: 24px;
+            height: 24px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .file-label img:hover {
+            opacity: 1;
+        }
+        
+        /* Message Input */
+        #message-input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            outline: none;
+            margin-right: 10px;
+        }
+        
+    
+        
+        /* 📩 Send Button (Hidden by default) */
+        #send-btn {
+            background: transparent;
+            border: none;
+            display: none;
+            cursor: pointer;
+        }
+        
+        .send-icon {
+            width: 28px;
+            height: 28px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .send-icon:hover {
+            opacity: 1;
+        }
