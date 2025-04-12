@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LMS Helpbot</title>
+  <link rel="stylesheet" href="{% static 'helpbot/css/style.css' %}">
+</head>
+<body>
+  <header class="header">
+      <h1 id="bot-title"></h1>
+      <button id="rename-btn">Rename HelpBot</button>
+  </header>
+  <div id="helpbot-icon">H</div>
+  <!-- Chat container to center the module -->
+  <div id="chat-container">
+      <!-- Chat thread container -->
+      <div id="chat-thread" class="chat-thread">
+          <!-- Default greeting from the helpbot -->
+          <div class="message-row bot-message">
+              <div class="message-bubble bot-bubble" id="default-greeting"></div>
+          </div>
+      </div>
+      
+      <!-- Input form -->
+      <form id="helpbot-form">
+          <input type="text" id="question" name="question" placeholder="Ask your question here..." required>
+          <button type="submit">Submit</button>
+      </form>
+  </div>
+  
+  <script>
+    // Retrieve botName from localStorage or default "HelpBot"
+    var botName = localStorage.getItem('botName') || "HelpBot";
+
+    // Update the header and greeting with the current botName
+    document.getElementById('bot-title').textContent = botName;
+    document.getElementById('default-greeting').textContent =
+      botName + ": Hello! How can I help you today?";
+
+    // Rename button logic
+    function updateGreeting() {
+      var defaultGreeting = document.getElementById('default-greeting');
+      defaultGreeting.textContent = botName + ": Hello! How can I help you today?";
+    }
+
+    document.getElementById('rename-btn').addEventListener('click', function() {
+        var newName = prompt("Enter a new name for your helpbot:");
+        if(newName) {
+            botName = newName;
+            localStorage.setItem('botName', botName);
+            document.getElementById('bot-title').textContent = botName;
+            updateGreeting();
+        }
+    });
+
+    // Handle form submission
+    document.getElementById('helpbot-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var question = document.getElementById('question').value;
+        var chatThread = document.getElementById('chat-thread');
+
+        // 1) Create a row for the user's message (right side)
+        var userRow = document.createElement('div');
+        userRow.classList.add('message-row', 'user-message');
+
+        // 2) Create a bubble for the user's text
+        var userBubble = document.createElement('div');
+        userBubble.classList.add('message-bubble', 'user-bubble');
+        userBubble.textContent = "You: " + question;
+
+        // Append the bubble to the row, and the row to the thread
+        userRow.appendChild(userBubble);
+        chatThread.appendChild(userRow);
+
+        // Clear the input field
+        document.getElementById('question').value = "";
+
+        // Send the request to the server
+        fetch("{% url 'helpbot_ask' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: "question=" + encodeURIComponent(question)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // 3) Create a row for the bot message (left side)
+            var botRow = document.createElement('div');
+            botRow.classList.add('message-row', 'bot-message');
+
+            // 4) Create a bubble for the bot's text
+            var botBubble = document.createElement('div');
+            botBubble.classList.add('message-bubble', 'bot-bubble');
+
+            // Create a span for the text
+            var botText = document.createElement('span');
+            botText.textContent = botName + ": " + data.response;
+
+            // Create a speaker icon
+            var audioBtn = document.createElement('button');
+            audioBtn.classList.add('speaker');
+            audioBtn.innerHTML = "🔊";
+            audioBtn.addEventListener('click', function(){
+                var utterance = new SpeechSynthesisUtterance(data.response);
+                window.speechSynthesis.speak(utterance);
+            });
+
+            // Append text and icon to the bot bubble
+            botBubble.appendChild(botText);
+            botBubble.appendChild(audioBtn);
+
+            // Append the bot bubble to the bot row
+            botRow.appendChild(botBubble);
+
+            // Finally, append the bot row to the chat thread
+            chatThread.appendChild(botRow);
+
+            // Scroll to bottom
+            chatThread.scrollTop = chatThread.scrollHeight;
+        });
+    });
+    document.getElementById('helpbot-icon').onclick = function() {
+    document.body.classList.add('fade-out');
+    setTimeout(() => {
+      window.location.href = '/launcher/';
+    }, 500);  // matches animation duration
+  };
+
+  // Ensure fade-in on page load
+  window.onload = function() {
+    document.body.classList.add('fade-in');
+  };
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Whiteboard{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .form-container input,
+    .form-container button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+    .form-container button {
+        background: blue;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    .form-container button:hover {
+        background: darkblue;
+    }
+</style>
+
+<div class="form-container">
+    <h1>Create a New Whiteboard</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="title">Whiteboard Name:</label>
+        <input type="text" id="title" name="title" required>
+
+        <button type="submit">Create</button>
+    </form>
+</div>
+{% endblock %}

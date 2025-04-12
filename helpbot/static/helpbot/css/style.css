@@ -1,0 +1,169 @@
+/* helpbot/static/helpbot/css/style.css */
+
+/* Base page styling */
+:root {
+    --color1: #AFC5DC;
+    --color2: #93AEC5;
+    --color3: #2994C1;
+    --color4: #FEF0C9;
+    --text-dark: #15418d;
+    --text-light: #F8FAFC;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background: linear-gradient(135deg, var(--color1), var(--color2));
+    min-height: 100vh;
+    color: var(--text-dark);
+}
+
+/* Header styling */
+.header {
+    background-color: #4E80AB; 
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+
+/* Chat container to center the module */
+#chat-container {
+    width: 50%;
+    margin: 50px auto;  /* centers container horizontally */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Chat thread area styling */
+.chat-thread { 
+    padding: 20px;
+    height: 400px; 
+    overflow-y: auto; 
+}
+
+/* Input field and button styling (unchanged) */
+#question {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px auto;
+    display: block;
+}
+button {
+    padding: 10px 20px;
+    border: none;
+    background: #21548A;
+    color: #fff;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 20px auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Speaker button */
+.speaker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;               /* Increased width */
+    height: 32px;              /* Increased height */
+    background-color: #21548A; /* Use your primary color */
+    color: #fff;               /* White text/icon */
+    border: none;
+    border-radius: 50%;        /* Circular button */
+    font-size: 1em;            /* Adjust font-size if needed */
+    margin-left: 10px;         /* Space between text and icon */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+}
+
+.speaker:hover {
+    background-color: #4E80AB; /* Change on hover for visual feedback */
+}
+
+/* MESSAGE ROWS - controlling alignment */
+.message-row {
+    display: flex;
+    margin-bottom: 10px;
+    width: 100%;
+}
+/* User messages on the right */
+.user-message {
+    justify-content: flex-end;
+}
+/* Bot messages on the left */
+.bot-message {
+    justify-content: flex-start;
+}
+
+/* MESSAGE BUBBLES */
+.message-bubble {
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 60%;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Bubble styling for user vs. bot */
+.user-bubble {
+    background-color: #A3C8F9;
+    color: #21548A;
+    text-align: right;  /* text aligned to the right for user bubble */
+}
+.bot-bubble {
+    background-color: #E0E8F0;
+    color: #21548A;
+    text-align: left;   /* text aligned to the left for bot bubble */
+}
+#helpbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #21548A;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1000;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Fade animations */
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

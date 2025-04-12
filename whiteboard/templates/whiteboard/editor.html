@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Edit Whiteboard - {{ board.title }}{% endblock %}
+
+{% block content %}
+<style>
+    .editor-container {
+        text-align: center;
+        max-width: 900px;
+        margin: auto;
+    }
+
+    canvas {
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        width: 100% !important;
+        height: 500px !important;
+        background-color: white;
+        display: block;
+    }
+
+    .toolbar {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .toolbar button {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .toolbar button:hover {
+        background: darkblue;
+    }
+
+    .toolbar input {
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<div class="editor-container">
+    <h1>Editing: {{ board.title }}</h1>
+
+    <!-- Toolbar for Drawing -->
+    <div class="toolbar">
+        <button onclick="setMode('pen')"><i class="bi bi-pencil"></i> Pen</button>
+        <button onclick="setMode('eraser')"><i class="bi bi-eraser"></i> Eraser</button>
+        <input type="color" id="colorPicker" value="#000000" onchange="changeColor(this.value)">
+        <button onclick="undo()"><i class="bi bi-arrow-left"></i> Undo</button>
+        <button onclick="redo()"><i class="bi bi-arrow-right"></i> Redo</button>
+        <button onclick="clearCanvas()"><i class="bi bi-trash"></i> Clear</button>
+        <button onclick="saveWhiteboard()"><i class="bi bi-save"></i> Save</button>
+        <button onclick="downloadImage()"><i class="bi bi-download"></i> Download</button>
+        <button onclick="addText()">Add Text</button>
+        <button onclick="setShape('rectangle')">Rectangle</button>
+        <button onclick="setShape('circle')">Circle</button>
+        <input type="number" min="1" max="10" onchange="changeLineWidth(this.value)" placeholder="Line Width">
+        <input type="number" min="10" max="50" onchange="changeTextSize(this.value)" placeholder="Text Size">
+        <input type="file" id="imageUpload" accept="image/*">
+
+    </div>
+
+    <canvas id="whiteboard"></canvas>
+</div>
+
+<!-- Custom Whiteboard Script -->
+<script>
+    const canvas = document.getElementById("whiteboard");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+    let mode = "pen";
+    let drawColor = "#000000";
+    let history = [];
+    let redoHistory = [];
+
+    // Resize canvas
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 500;
+    }
+    window.onload = resizeCanvas;
+    window.onresize = resizeCanvas;
+
+    // Start Drawing
+    canvas.addEventListener("mousedown", (e) => {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
+        saveState();
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+        if (!drawing) return;
+        ctx.strokeStyle = mode === "pen" ? drawColor : "#FFFFFF";
+        ctx.lineWidth = mode === "eraser" ? 20 : 3;
+        ctx.lineCap = "round";
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+    });
+
+    canvas.addEventListener("mouseup", () => {
+        drawing = false;
+        ctx.closePath();
+    });
+
+    // Change Mode (Pen or Eraser)
+    function setMode(newMode) {
+        mode = newMode;
+    }
+
+    // Change Pen Color
+    function changeColor(color) {
+        drawColor = color;
+    }
+
+    // Save Current State (for Undo)
+    function saveState() {
+        history.push(canvas.toDataURL());
+        redoHistory = []; // Clear redo stack
+    }
+
+    // Undo Last Action
+    function undo() {
+        if (history.length === 0) return;
+        redoHistory.push(canvas.toDataURL());
+        const prevState = history.pop();
+        restoreCanvas(prevState);
+    }
+
+    // Redo Last Undo
+    function redo() {
+        if (redoHistory.length === 0) return;
+        history.push(canvas.toDataURL());
+        const nextState = redoHistory.pop();
+        restoreCanvas(nextState);
+    }
+
+    // Restore Canvas from a Saved State
+    function restoreCanvas(imageData) {
+        let img = new Image();
+        img.src = imageData;
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        };
+    }
+
+    // Clear Canvas
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        saveState();
+    }
+
+    // Save Whiteboard to Database
+    function saveWhiteboard() {
+        const dataURL = canvas.toDataURL();
+
+        fetch(`/whiteboard/save/{{ board.id }}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCSRFToken()  // ✅ Fix: Send CSRF Token
+            },
+            body: `image=${encodeURIComponent(dataURL)}`
+        }).then(response => response.json()).then(data => {
+            if (data.status === "success") {
+                alert("Whiteboard Saved!");
+            } else {
+                alert("Save failed!");
+            }
+        });
+    }
+
+    // ✅ Function to get CSRF token from Django's cookies
+    function getCSRFToken() {
+        let cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.startsWith("csrftoken=")) {
+                return cookie.split("=")[1];
+            }
+        }
+        return "";
+    }
+
+    // Download Whiteboard as Image
+    function downloadImage() {
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL();
+        link.download = "{{ board.title }}.png";
+        link.click();
+    }
+    function loadWhiteboard() {
+        const savedImage = "{% if board.image %}{{ board.image.url }}{% else %}{% endif %}";  // ✅ Fix for missing image
+        console.log("Loading saved image ", savedImage);
+        if (savedImage.trim() !== "") {
+            let img = new Image();
+            img.src = savedImage;
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                console.log("✅ Image loaded, checking dimensions...");
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // ✅ Ensure the image fits inside the canvas
+                let imgWidth = img.width;
+                let imgHeight = img.height;
+                let aspectRatio = imgWidth / imgHeight;
+
+                let newWidth = canvas.width;
+                let newHeight = newWidth / aspectRatio;
+
+                if (newHeight > canvas.height) {
+                    newHeight = canvas.height;
+                    newWidth = newHeight * aspectRatio;
+                }
+
+                let xOffset = (canvas.width - newWidth) / 2;
+                let yOffset = (canvas.height - newHeight) / 2;
+
+                console.log("Drawing image at:", xOffset, yOffset, newWidth, newHeight);
+
+                ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
+            };
+            img.onerror = () => {
+                console.error("Failed to load image:", savedImage);
+            };
+        } else {
+            console.warn("No saved image found for this whiteboard.");
+        }
+
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(loadWhiteboard, 1000);
+    });
+
+
+</script>
+<script src="{% static 'js/whiteboard.js' %}"></script>
+
+{% endblock %}

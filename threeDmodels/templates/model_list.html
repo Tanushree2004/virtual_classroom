@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/static/css/model.css">
+<style>   
+.models-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Model Cards Grid */
+.models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 100px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Individual Model Card */
+.model-card {
+    background: linear-gradient(135deg, #222, #333);
+    padding: 40px;
+    border-radius: 14px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    border: 1px solid #444;
+}
+
+.model-card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+/* Model Card Hover Effect */
+.model-card:hover {
+    transform: translateY(-5px);
+    background: linear-gradient(135deg, #333, #444);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Model Actions (Buttons) */
+.model-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+/* Buttons Styling */
+.download-btn, .view-btn, .btn-delete {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Download Button */
+.download-btn {
+    background: #007bff;
+    color: white;
+}
+
+.download-btn:hover {
+    background: #0056b3;
+}
+
+/* View Button */
+.view-btn {
+    background: #28a745;
+    color: white;
+}
+
+.view-btn:hover {
+    background: #1e7e34;
+}
+
+/* Delete Button */
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+}
+
+/* Icons Inside Buttons */
+.download-btn i, .view-btn i, .btn-delete i {
+    font-size: 16px;
+}
+
+/* Popup Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Content */
+.modal-content {
+    background: #222;
+    width: 90%;
+    max-width: 1000px;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 22px;
+    background: red;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index:1001;}
+
+.close-btn:hover {
+    color: #c0392b;
+    background:white;
+}
+
+/* Model Viewer Container */
+#model-viewer-container {
+    width: 100%;
+    height: 600px;
+    border-radius: 10px;
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: 2px solid #444;
+}
+
+/* Loading Indicator */
+#loading {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* Controls Container */
+#controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Control Buttons */
+#controls button {
+    padding: 12px 18px;
+    border: none;
+    background: linear-gradient(135deg, #444, #666);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+#controls button:hover {
+    background: linear-gradient(135deg, #666, #888);
+    transform: translateY(-2px);
+}
+
+#controls button:active {
+    transform: scale(0.98);
+}
+
+#controls button i {
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .models-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .model-card {
+        padding: 30px;
+    }
+
+    .modal-content {
+        width: 95%;
+    }
+
+    #model-viewer-container {
+        height: 500px;
+    }
+}
+
+</style>
+<div class="models-container">
+    <div class="models-grid">
+        {% for model in models %}
+        <div class="model-card">
+            <h3>{{ model.name }}</h3>
+            <div class="model-actions">
+                <a href="{{ model.model_file.url }}" download class="download-btn">
+                    <i class="fas fa-download"></i> Download
+                </a>
+                <a href="#" class="view-model view-btn" data-url="{{ model.model_file.url }}">
+                    <i class="fas fa-eye"></i> View
+                </a>
+                {% if user.role == "Admin" or user.role == "Instructor" %}
+                <a href="{% url 'threeDmodels:delete_model' model.id %}" class="btn-delete" onclick="return confirm('Are you sure?')">
+                    <i class="bi bi-trash"></i> Delete
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div id="modelPopup" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div id="model-viewer-container">
+            <div id="loading">Loading Model...</div>
+        </div>
+        <div id="controls">
+            <button id="toggleRotation">
+                <i class="fas fa-sync-alt"></i> Toggle Rotation
+            </button>
+            <button id="toggleWireframe">
+                <i class="fas fa-border-style"></i> Wireframe Mode
+            </button>
+            <button id="zoomToModel">
+                <i class="fas fa-search-plus"></i> Zoom to Model
+            </button>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/DRACOLoader.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const viewLinks = document.querySelectorAll(".view-model");
+        const modal = document.getElementById("modelPopup");
+        const closeModal = document.querySelector(".close-btn");
+        const container = document.getElementById("model-viewer-container");
+        const loadingIndicator = document.getElementById("loading");
+        const toggleRotationBtn = document.getElementById("toggleRotation");
+        const toggleWireframeBtn = document.getElementById("toggleWireframe");
+        const zoomToModelBtn = document.getElementById("zoomToModel");
+    
+        let scene, camera, renderer, controls, loader, model, isRotating = false, isWireframe = false;
+    
+        function initViewer() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 5000);
+            camera.position.set(0, 2, 10);  // Start further back
+    
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+    
+            if (!container.querySelector("canvas")) {
+                container.innerHTML = "";
+                container.appendChild(renderer.domElement);
+            }
+    
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.1;
+            controls.minDistance = 0.1;  // Allow extreme zoom-in
+            controls.maxDistance = 5000; // Allow unlimited zoom-out
+            controls.zoomSpeed = 2;      // Faster zoom response
+    
+            const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+            scene.add(ambientLight);
+    
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(2, 5, 3);
+            scene.add(directionalLight);
+    
+            window.addEventListener("resize", onWindowResize);
+            animate();
+        }
+    
+        function loadModel(url) {
+            if (!loader) {
+                loader = new THREE.GLTFLoader();
+                const dracoLoader = new THREE.DRACOLoader();
+                dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128/examples/js/libs/draco/');
+                loader.setDRACOLoader(dracoLoader);
+            }
+    
+            loadingIndicator.style.display = "block";
+    
+            loader.load(
+                url,
+                function (gltf) {
+                    if (model) scene.remove(model);
+                    model = gltf.scene;
+                    scene.add(model);
+    
+                    // Auto-scale model based on bounding box size
+                    const box = new THREE.Box3().setFromObject(model);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scaleFactor = 10 / maxDim;  // Scale to fit in view
+                    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+    
+                    // Adjust camera to center model in view
+                    const center = box.getCenter(new THREE.Vector3());
+                    camera.position.set(center.x, center.y, maxDim * 2);
+                    controls.target.set(center.x, center.y, center.z);
+                    controls.update();
+    
+                    console.log("Model loaded successfully:", gltf);
+                    loadingIndicator.style.display = "none";
+                },
+                function (xhr) {
+                    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                },
+                function (error) {
+                    console.error("Error loading model:", error);
+                    loadingIndicator.style.display = "none";
+                    alert("Failed to load the model.");
+                }
+            );
+        }
+    
+        function animate() {
+            requestAnimationFrame(animate);
+            if (isRotating && model) model.rotation.y += 0.005;
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+    
+        // 🔹 **New Zoom to Model Button (Ensures Extreme Enlargement)**
+        zoomToModelBtn.addEventListener("click", () => {
+            if (model) {
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3()).length();
+                camera.position.set(center.x, center.y, size * 5); // Increased zoom
+                controls.target.set(center.x, center.y, center.z);
+                controls.update();
+            }
+        });
+    
+        toggleRotationBtn.addEventListener("click", () => {
+            isRotating = !isRotating;
+        });
+    
+        toggleWireframeBtn.addEventListener("click", () => {
+            if (model) {
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material.wireframe = !isWireframe;
+                    }
+                });
+                isWireframe = !isWireframe;
+            }
+        });
+    
+        viewLinks.forEach((link) => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+                modal.style.display = "flex";
+                loadModel(this.dataset.url);
+            });
+        });
+    
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+    
+        initViewer();
+    });
+    
+</script>
+{% endblock %}
