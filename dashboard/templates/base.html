@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LearnLynk{% endblock %}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>  
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Poppins&family=Roboto&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/css/style.css"> 
+    <link rel="stylesheet" href="/static/css/base1.css">
+    <style>
+        .content {
+            max-height: 100%; /* Adjust height as needed */
+            max-width: 100%;  /* Adjust width as needed */
+            overflow: auto; /* Enables both vertical and horizontal scrolling */
+            border: 1px solid #ccc; /* Optional: Adds a border */
+            padding: 10px; /* Optional: Adds padding */
+            white-space: nowrap; /* Prevents content from wrapping */
+        }
+        /* Font Styles */
+.font-sans-serif { font-family: 'Segoe UI', 'Helvetica Neue', sans-serif; }
+.font-serif { font-family: 'Georgia', serif; }
+.font-monospace { font-family: 'Courier New', monospace; }
+.font-inter { font-family: 'Inter', sans-serif; }
+.font-poppins { font-family: 'Poppins', sans-serif; }
+.font-roboto { font-family: 'Roboto', sans-serif; }
+
+/* Font Sizes */
+.size-small { font-size: 14px; }
+.size-medium { font-size: 26px; }
+.size-large { font-size: 38px; }
+
+/* Themes */
+.theme-dark {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+.theme-light {
+    background-color: #ffffff;
+    color: #111;
+}
+
+    </style>
+</head>
+<body class="theme-{{ user_theme }} font-{{ user_font_style }} size-{{ user_font_size }}">
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">LearnLynk</div>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'dashboard_view' %}"><i class="bi bi-house-door"></i> Dashboard</a></li>
+                    {% if user.role == "Admin" %} 
+                    <li> <a href="{% url 'user_list' %}">
+                        <i class="bi bi-person-gear"></i> User Management
+                    {% endif %}
+                    <li><a href="{% url 'classroom_list' %}"><i class="bi bi-folder"></i> Classrooms</a></li>
+                    <li><a href="{% url 'calendar_view' %}"><i class="bi bi-calendar-event"></i> Calendar</a></li>
+                    <li class="expandable">
+                        <i class="bi bi-calendar-check"></i> Meeting Scheduler
+                    </li>
+                    <ul class="sub-menu">
+                        {% if user.role == "Admin" or user.role == "Instructor" %} 
+                            <li><a href="{% url 'meeting_scheduler:create_meeting' %}"><i class="bi bi-plus-circle"></i> Schedule a Meeting</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'meeting_scheduler:all_meetings' %}"><i class="bi bi-list-task"></i> View All Meetings</a></li>
+                    </ul>
+                    <li class="expandable">
+                        <i class="bi bi-box"></i> 3D Model Viewer
+                    </li>
+                    <ul class="sub-menu">
+                        {% if user.role == "Admin" or user.role == "Instructor" %}
+                            <li><a href="{% url 'threeDmodels:upload_3d_model' %}"><i class="bi bi-upload"></i> Upload Model</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'threeDmodels:model_list' %}"><i class="bi bi-eye"></i> View Models</a></li>
+                    </ul>
+
+                    <li><a href="#"><i class="bi bi-file-earmark-text"></i> Resources</a></li>
+                    <li><a href="#"><i class="bi bi-chat-dots"></i> Discussion Forum</a></li>
+                    {% if user.role == "Instructor" or user.role == "Student" %}
+                    <li><a href="{% url 'assignments_app:dashboard_redirect_asg' %}"><i class="bi bi-list-task"></i>Assignments</a></li>
+                    {% endif %}
+                    {% if user.role == "Instructor" or user.role == "Student" %}
+                    <li><a href="{% url 'exam:dashboard_redirect_exam' %}"><i class="bi bi-list-task"></i>Exams
+                    {% if has_unseen_live_exam %}
+                    <span style="color: red; animation: blinker 1s linear infinite;">🆕</span>
+                    {% endif %}
+                    </a></li>
+                    {% endif %}
+                    <li><a href="{% url 'profile' %}"><i class="bi bi-house-door"></i> My account</a></li>
+                    <li><a href="{% url 'user_settings' %}"><i class="bi bi-gear"></i> Settings</a></li>
+                    <li><a href="{% url 'whiteboard:dashboard' %}"><i class="bi bi-pencil-square"></i>Whiteboard</a></li>
+                    <li><a href="{% url 'flashcards:upload_file' %}"><i class="bi bi-pencil-square"></i>Flashcards</a></li>
+                    <li class="logout"><a href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const expandableItems = document.querySelectorAll(".expandable");
+    
+            expandableItems.forEach(item => {
+                item.addEventListener("click", function() {
+                    const subMenu = this.nextElementSibling;
+                    subMenu.style.display = (subMenu.style.display === "block") ? "none" : "block";
+                    this.classList.toggle("active");
+                });
+            });
+        });
+    </script>
+</body>
+</html>

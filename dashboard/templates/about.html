@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Virtual Classroom</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/about.css">
+</head>
+<body>
+    <div class="main-content">
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="{% url 'landing_page' %}">LearnLynk</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'landing_page' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'about' %}">About</a></li>
+            </ul>
+            <button class="btn btn-primary"  onclick="window.location.href='{% url 'login' %}'">
+                Get Started
+            </button>
+        </div>
+    </nav>
+<section class="container text-center mt-5">
+    <h2>Meet the Team</h2>
+    <p>Our passionate team is dedicated to creating an innovative learning experience.</p>
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-3">
+            <div class="card team-member">
+                <img src="/static/images/landing.png" class="card-img-top" alt="Mentor">
+                <div class="card-body">
+                    <h5 class="card-title">Dr. Asoke Nath</h5>
+                    <p class="card-text">Project Mentor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-3">
+            <div class="card team-member">
+                <img src="/static/images/landing.png" class="card-img-top" alt="Team Member 1">
+                <div class="card-body">
+                    <h5 class="card-title">Bijetree Basak</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card team-member">
+                <img src="/static/images/landing.png" class="card-img-top" alt="Team Member 2">
+                <div class="card-body">
+                    <h5 class="card-title">Sania Rahaman</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card team-member">
+                <img src="/static/images/landing.png" class="card-img-top" alt="Team Member 3">
+                <div class="card-body">
+                    <h5 class="card-title">Tanushree Jati</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+    <footer class="footer text-center mt-5">
+        <p>© 2025 VirtualClassroom | All Rights Reserved</p>
+        <a href="#"><i class="bi bi-facebook"></i></a>
+        <a href="#"><i class="bi bi-twitter"></i></a>
+        <a href="#"><i class="bi bi-linkedin"></i></a>
+    </footer> 
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login | LearnLynk</title>
+    <link rel="stylesheet" href="/static/css/login1.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>       
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    value="{{ username|default:'' }}" 
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                />
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="remember_me" name="remember_me">
+                <label for="remember_me">Remember Me</label>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+
+        <p>Don't have an account? <a href="{% url 'admin_register' %}">Register Institution</a></p>
+
+    </div>
+</body>
+</html>

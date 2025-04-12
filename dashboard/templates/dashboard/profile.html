@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
+    .pbody {
+        /*font-family: 'Poppins', sans-serif;*/
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 93.1vh;
+        background: #f5f5f5;
+    }
+
+    .profile-container {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        max-width: 1000px;
+        width: 90%;
+        text-align: left;
+        box-sizing: border-box;
+    }
+
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-image-wrapper {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        cursor: pointer;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .profile-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #ddd;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-image-wrapper:hover .overlay {
+        opacity: 1;
+    }
+
+    .profile-info h2 {
+        margin: 10px 0 5px;
+        font-size: 22px;
+        color: #333;
+        text-align: center;
+    }
+
+    .role {
+        background: #007bff;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .btn {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .edit-btn {
+        background: #007bff;
+        color: white;
+    }
+
+    .edit-btn:hover {
+        background: #0056b3;
+    }
+
+    .save-btn {
+        background: #28a745;
+        color: white;
+    }
+
+    .save-btn:hover {
+        background: #218838;
+    }
+
+    .cancel-btn {
+        background: #dc3545;
+        color: white;
+    }
+
+    .cancel-btn:hover {
+        background: #c82333;
+    }
+
+    #id_profile_image {
+        display: none;
+    }
+
+    form label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    form input,
+    form select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-top: 5px;
+    }
+
+    p {
+        margin: 8px 0;
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 20px;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .profile-info h2 {
+            font-size: 20px;
+        }
+
+        .btn {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .profile-container {
+            width: 95%;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .profile-info h2 {
+            font-size: 18px;
+        }
+
+        .role {
+            font-size: 12px;
+        }
+    }
+</style>
+<div class="pbody">
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-image-wrapper" id="profile-image-wrapper">
+            <img id="profile-img-preview" class="profile-img" src="{{ user.profile_image.url }}" alt="Profile Picture">
+            <div class="overlay">
+                <i class="fa fa-camera"></i>
+            </div>
+        </div>
+        <div class="profile-info">
+            <h2>{{ user.username }}</h2>
+            <p class="role">{{ user.get_role_display }}</p>
+        </div>
+    </div>
+
+    <!-- Profile Details -->
+    <div id="profile-details">
+        {% if user.role == "Student" %}
+            <p><strong>Session Year:</strong> {{ user.session_year }}</p>
+            <p><strong>Semester:</strong> {{ user.semester }}</p>
+            <p><strong>Class:</strong> {{ user.student_class }}</p>
+            <p><strong>Course:</strong> {{ user.course }}</p>
+            <p><strong>Student ID:</strong> {{ user.student_id }}</p>
+        {% elif user.role == "Instructor" or user.role == "Admin" %}
+            <p><strong>Faculty:</strong> {{ user.faculty }}</p>
+            <p><strong>Position:</strong> {{ user.position }}</p>
+        {% endif %}
+        <button id="edit-profile-btn" class="btn edit-btn"><i class="fa fa-edit"></i> Edit Profile</button>
+    </div>
+
+    <!-- Profile Edit Form (Hidden by Default) -->
+    <form method="POST" enctype="multipart/form-data" id="profile-form" style="display: none;">
+        {% csrf_token %}
+
+        <!-- Hidden File Input for Profile Picture -->
+        <input type="file" id="id_profile_image" name="profile_image" accept="image/*">
+
+        {% if user.role == "Student" %}
+            <label>Session Year</label> {{ form.session_year }}
+            <label>Semester</label> {{ form.semester }}
+            <label>Class</label> {{ form.student_class }}
+            <label>Course</label> {{ form.course }}
+            <label>Student ID</label> {{ form.student_id }}
+        {% elif user.role == "Instructor" or user.role == "Admin" %}
+            <label>Faculty</label> {{ form.faculty }}
+            <label>Position</label> {{ form.position }}
+        {% endif %}
+
+        <button type="submit" class="btn save-btn"><i class="fa fa-save"></i> Save Changes</button>
+        <button type="button" id="cancel-edit" class="btn cancel-btn"><i class="fa fa-times"></i> Cancel</button>
+    </form>
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const profileWrapper = document.getElementById("profile-image-wrapper");
+        const profileImgPreview = document.getElementById("profile-img-preview");
+        const profileInput = document.getElementById("id_profile_image");
+        const editProfileBtn = document.getElementById("edit-profile-btn");
+        const profileForm = document.getElementById("profile-form");
+        const profileDetails = document.getElementById("profile-details");
+        const cancelEditBtn = document.getElementById("cancel-edit");
+
+        // Click profile image to open file input
+        profileWrapper.addEventListener("click", function () {
+            profileInput.click();
+        });
+
+        // Preview new profile image instantly
+        profileInput.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profileImgPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+
+                // Submit form automatically when image is selected
+                profileForm.submit();
+            }
+        });
+
+        // Toggle edit profile form
+        editProfileBtn.addEventListener("click", function () {
+            profileDetails.style.display = "none";
+            profileForm.style.display = "block";
+        });
+
+        cancelEditBtn.addEventListener("click", function () {
+            profileDetails.style.display = "block";
+            profileForm.style.display = "none";
+        });
+    });
+</script>
+</div>
+{% endblock %}

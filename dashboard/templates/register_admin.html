@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register Admin | LearnLynk</title>
+    <link rel="stylesheet" href="/static/css/login1.css">
+</head>
+<body>
+<div class="login-container">
+    <h1>Register Institution Admin</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="error">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="institution_name">Institution Name:</label>
+            <input type="text" name="institution_name" required>
+        </div>
+        {{ form.as_p }}
+        <button type="submit" class="btn">Register Admin</button>
+    </form>
+    <p><a href="{% url 'login' %}">Back to Login</a></p>
+</div>
+</body>
+</html>

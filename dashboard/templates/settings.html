@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+    .settings-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 30px;
+        background: var(--card-bg, #f9f9f9);
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        font-family: inherit;
+    }
+
+    .settings-container h2 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+
+    .settings-container label {
+        display: block;
+        margin: 12px 0 5px;
+        font-weight: 600;
+    }
+
+    .settings-container select{
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: white;
+    }
+
+    .settings-container button[type="submit"] {
+        margin-top: 20px;
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .settings-container button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive for small screens */
+    @media (max-width: 480px) {
+        .settings-container {
+            padding: 20px;
+            margin: 20px;
+        }
+    }
+</style>
+
+<div class="settings-container">
+    <h2>User Settings</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Preferences</button>
+    </form>
+</div>
+
+{% endblock %}

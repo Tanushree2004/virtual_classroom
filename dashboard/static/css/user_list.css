@@ -1,0 +1,202 @@
+.pbody {
+    /*font-family: 'Poppins', sans-serif;*/
+    padding: 1rem;
+    min-height: 93.1vh;
+    background: #f5f5f5;
+}
+.title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1565C0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Action Button */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #28A745;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+/* Table Styling */
+.table-container {
+    overflow-x: auto; /* Ensures table is scrollable on small screens */
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.user-table thead {
+    background: #1565C0;
+    color: white;
+}
+
+.user-table th, .user-table td {
+    padding: 14px 20px;
+    border: 1px solid #E0E4EB;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #F1F6FE;
+}
+
+/* Table Actions */
+.actions-cell {
+    display: flex;
+    gap: 10px;
+}
+
+/* Edit & Delete Buttons */
+.btn-edit, .btn-delete {
+    text-decoration: none;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background: #007BFF;
+    color: white;
+}
+
+.btn-delete {
+    background: #DC3545;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.btn-delete:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .user-management-container {
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 1.8rem;
+    }
+
+    .btn-add {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+
+    .user-table th, .user-table td {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .btn-edit, .btn-delete {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+}
+/* Styles for the search and filter section */
+.search-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+}
+
+.search-bar {
+    flex: 1 1 400px;
+    max-width: 100%;
+    margin-top: -25px;
+}
+
+.filters {
+    margin-top: -25px;
+    flex: 1 1 300px;
+    max-width: 100%;
+}
+
+
+.actions {
+    flex-shrink: 0;
+}
+
+.form-select {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.input-group-text {
+    background-color: #1565C0;
+    color: white;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .search-filter-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar,
+    .filters {
+        max-width: 100%;
+    }
+
+    .actions {
+        margin-top: 10px;
+    }
+}
+
+
+
+
+
+
+
+

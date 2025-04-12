@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Classroom | Learn Smarter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/landing1.css">
+</head>
+<body>
+    <div class="main-content">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="preloader" style="display: none;">
+        <div class="spinner">
+            <span>L</span>
+            <span>O</span>
+            <span>A</span>
+            <span>D</span>
+            <span>I</span>
+            <span>N</span>
+            <span>G</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="{% url 'landing_page' %}">LearnLynk</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'landing_page' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+            </ul><button class="btn btn-primary" onclick="redirectToDashboard()">
+                Get Started
+            </button>
+        </div>
+    </nav>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Learn Smarter, Not Harder!</h1>
+            <p>Discover top courses, research materials, and interactive learning tools.</p>
+        </div>
+    </section>
+    <section class="container features">
+        <h3 class="text-center"><b>Key Features</b></h3>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-person-video3"></i>
+                    <h5>Live Virtual Classrooms</h5>
+                    <p>Engage with instructors and peers in real-time with interactive classes.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <h5>Research Paper Repository</h5>
+                    <p>Access a wide range of academic papers and research materials.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-brush"></i>
+                    <h5>Plagiarism Checker</h5>
+                    <p>Ensure originality with our advanced plagiarism detection system.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-card-list"></i>
+                    <h5>Flashcard Generator</h5>
+                    <p>Create study flashcards from research papers for better retention.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <h5>3D Model Viewer</h5>
+                    <p>Visualize complex models in an interactive 3D <br/>environment.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-robot"></i>
+                    <h5>Help Bot</h5>
+                    <p>Get instant help with an assistant to navigate through the system.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-person-video3"></i>
+                    <h5>Classroom Management</h5>
+                    <p>Efficiently manage classrooms, students, and <br/>instructors.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-calendar-check"></i>
+                    <h5>Scheduling & Communication</h5>
+                    <p>Plan lessons, schedule meetings, and collaborate seamlessly.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-people"></i>
+                    <h5>Resources Library</h5>
+                    <p>Share study materials and collaborate on projects.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-clipboard-data"></i>
+                    <h5>Assessments & Study Aids</h5>
+                    <p>Track student progress with tests, quizzes, and study tools.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="bi bi-controller"></i>
+                    <h5>Gamification</h5>
+                    <p>Make learning engaging with badges and leaderboards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br/>
+    <br/>
+</div>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 VirtualClassroom | All Rights Reserved</p>
+        <a href="#"><i class="bi bi-facebook"></i></a>
+        <a href="#"><i class="bi bi-twitter"></i></a>
+        <a href="#"><i class="bi bi-linkedin"></i></a>
+    </footer> 
+    <script>
+        function redirectToDashboard() {
+            let isAuthenticated = "{{ request.user.is_authenticated }}" === "True"; 
+            let userRole = "{{ request.user.role }}";   
+            if (isAuthenticated) {
+                let url = "{% url 'student_dashboard' %}";
+    
+                if (userRole === "Admin") {
+                    url = "{% url 'admin_dashboard' %}";
+                } else if (userRole === "Instructor") {
+                    url = "{% url 'instructor_dashboard' %}";
+                }   
+                showPreloaderAndRedirect(url);
+            } else {
+                showPreloaderAndRedirect("{% url 'login' %}");
+            }
+        }   
+        function showPreloaderAndRedirect(url) {
+            document.getElementById("preloader").style.display = "flex";
+            setTimeout(() => {
+                window.location.href = url;
+            }, 900);
+        }
+    </script> 
+    <style>
+        #preloader {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+    
+        .spinner {
+            font-size: 28px;
+            font-weight: bold;
+            font-family: "Poppins", sans-serif;
+            display: flex;
+            gap: 5px;
+            color: #007bff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        
+        .spinner span {
+            opacity: 0;
+            animation: fade-in 1.5s infinite, color-shift 3s infinite alternate;
+        }    
+        .spinner span:nth-child(1) { animation-delay: 0s; }
+        .spinner span:nth-child(2) { animation-delay: 0.2s; }
+        .spinner span:nth-child(3) { animation-delay: 0.4s; }
+        .spinner span:nth-child(4) { animation-delay: 0.6s; }
+        .spinner span:nth-child(5) { animation-delay: 0.8s; }
+        .spinner span:nth-child(6) { animation-delay: 1s; }
+        .spinner span:nth-child(7) { animation-delay: 1.2s; }     
+        @keyframes fade-in {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }       
+        @keyframes color-shift {
+            0% { color: #007bff; text-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
+            100% { color: #ff5722; text-shadow: 0 0 10px rgba(255, 87, 34, 0.8); }
+        }       
+    </style>
+</body>
+</html>

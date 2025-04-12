@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if messages %}
+    <script>
+        {% for message in messages %}
+            alert("{{ message|escapejs }}");
+        {% endfor %}
+    </script>
+{% endif %}
+<link rel="stylesheet" href="/static/css/edit_user.css">
+<div class="edit-user-container">
+    <h1 class="title"><i class="bi bi-pencil-square"></i> Edit User</h1>
+
+    <form method="post" class="user-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="input-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn-submit">
+            <i class="bi bi-save"></i> Save Changes
+        </button>
+    </form>
+
+    <a href="{% url 'user_list' %}" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Back to Users
+    </a>
+</div>
+{% endblock %}
