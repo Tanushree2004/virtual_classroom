@@ -1,0 +1,13 @@
+
+
+{% extends "discussions/base.html" %}
+
+{% block main_content %}
+    <h2>Start New Discussion</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="submit-btn">Post Discussion</button>
+        <a href="{% url 'discussions:discussion_list' %}" class="cancel-btn">Cancel</a>
+    </form>
+{% endblock %}

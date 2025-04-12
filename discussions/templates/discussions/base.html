@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS Discussion Forum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --color1: #AFC5DC;
+            --color2: #93AEC5;
+            --color3: #2994C1;
+            --color4: #FEF0C9;
+            --text-dark: #2D3748;
+            --text-light: #F8FAFC;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, var(--color1), var(--color2));
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--color3), var(--color2));
+            color: var(--text-light);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+        
+        .menu-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            right: 20px;
+            top: 60px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            min-width: 180px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        
+        .dropdown-menu.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: var(--color4);
+            color: var(--color3);
+            padding-left: 25px;
+        }
+        
+        .sidebar {
+            width: 25%;
+            padding-right: 30px;
+        }
+        
+        .main-content {
+            width: 75%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .following-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+        }
+        
+        .star-icon {
+            color: #000000;
+            margin-right: 8px;
+            font-size: 1.1em;
+        }
+        
+        .new-discussion-btn {
+            display: inline-block;
+            background: linear-gradient(to right, var(--color3), var(--color2));
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .new-discussion-btn:hover {
+            background: linear-gradient(to right, var(--color2), var(--color3));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--color3), transparent);
+            margin: 25px 0;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        ul li {
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+            transition: all 0.2s;
+        }
+        
+        ul li:hover {
+            padding-left: 5px;
+        }
+        
+        ul li:last-child {
+            border-bottom: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: linear-gradient(to right, var(--color1), var(--color2));
+            color: var(--text-light);
+        }
+        
+        /* Popup styles */
+        .comments-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.3);
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .popup-header h3 {
+            margin: 0;
+            color: var(--color3);
+        }
+        
+        .close-popup {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-popup:hover {
+            color: #666;
+        }
+        
+        .comment-list {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .comment-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .comment-meta {
+            margin-bottom: 5px;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .comment-form {
+            margin-top: 20px;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        
+        .comment-author-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, var(--color3), var(--color2));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .cancel-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 0 10px;
+    background: #f0f0f0;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+    background: #ddd;
+}
+.search-container {
+    margin-bottom: 30px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.search-input {
+    width: calc(100% - 100px);
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    border-color: var(--color3);
+    box-shadow: 0 0 0 2px rgba(41, 148, 193, 0.2);
+}
+
+.search-btn {
+    background: var(--color3);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s;
+}
+
+.search-btn:hover {
+    background: var(--color2);
+}
+
+.clear-search {
+    margin-left: 15px;
+    color: var(--color3);
+    text-decoration: none;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+}
+
+.clear-search:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .search-input {
+        width: calc(100% - 90px);
+    }
+    
+    .search-btn {
+        padding: 12px 15px;
+    }
+}
+
+    /* Add to your existing styles */
+.comments-popup .comment-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    border-left: 3px solid var(--color3);
+}
+
+.comments-popup .comment-actions {
+    margin-top: 10px;
+}
+
+.comments-popup .reply-btn {
+    background: none;
+    border: none;
+    color: var(--color3);
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+.comments-popup .reply-btn:hover {
+    text-decoration: underline;
+}
+
+.comments-popup .reply-form {
+    display: none;
+    margin-top: 10px;
+    padding: 15px;
+    background: #f0f0f0;
+    border-radius: 5px;
+}
+
+.comments-popup .replies {
+    margin-left: 30px;
+    margin-top: 15px;
+    border-left: 2px solid #ddd;
+    padding-left: 15px;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>LMS Discussion Forum</h1>
+            <button class="menu-btn" id="menuBtn">☰</button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <aside class="sidebar">
+            {% block sidebar %}
+                <h2>All discussions</h2>
+                
+                
+                <hr>
+                
+                <h3>CATEGORIES</h3>
+                <ul>
+                    {% for category in main_categories %}
+                        <li><a href="{% url 'discussions:category_discussions' category.slug %}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <div id="add-category-container">
+                    <button id="add-category-btn" class="new-discussion-btn" style="margin-top: 10px;">Add New Category</button>
+                    <input type="text" id="new-category-input" placeholder="Enter category name" style="display: none; margin-top: 10px; width: 100%; padding: 5px;">
+                </div>
+                
+                <hr>
+                
+                <div>
+                    <a href="{% url 'discussions:create_discussion' %}" class="new-discussion-btn">Start new Discussion</a>
+                </div>
+            {% endblock %}
+        </aside>
+        
+        <main class="main-content">
+            {% block main_content %}{% endblock %}
+        </main>
+    </div>
+    
+    <footer>
+        <p>© {% now "Y" %} LMS Discussion Forum</p>
+    </footer>
+
+    <script>
+         
+        // Menu toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('menuBtn');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            
+            menuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function() {
+                dropdownMenu.classList.remove('show');
+            });
+            
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            const addCategoryBtn = document.getElementById('add-category-btn');
+            const newCategoryInput = document.getElementById('new-category-input');
+            
+            addCategoryBtn.addEventListener('click', function() {
+                // Toggle the display of the input field
+                if (newCategoryInput.style.display === 'none') {
+                    newCategoryInput.style.display = 'block';
+                    newCategoryInput.focus();
+                } else {
+                    newCategoryInput.style.display = 'none';
+                }
+            });
+            newCategoryInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const categoryName = newCategoryInput.value.trim();
+                    if (categoryName === '') return;
+                    
+                    const formData = new FormData();
+                    formData.append('category_name', categoryName);
+                    
+                    fetch("{% url 'discussions:add_category' %}", {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+   // Append the new category to the sidebar list immediately
+   const categoryList = document.getElementById('category-list');
+                            const li = document.createElement('li');
+                            const a = document.createElement('a');
+                            a.href = "/category/" + data.slug + "/";
+                            a.textContent = data.name;
+                            li.appendChild(a);
+                            categoryList.appendChild(li);
+                            
+                            
+                            // Also update the category dropdown in the discussion form if it exists
+                            const categorySelect = document.getElementById('id_category');
+                            if (categorySelect) {
+                                const option = document.createElement('option');
+                                option.value = data.id;
+                                option.text = data.name;
+                                categorySelect.appendChild(option);
+                            }
+                            
+                            newCategoryInput.value = '';
+                            newCategoryInput.style.display = 'none';
+                        } else {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            });
+            
+            // Function to get CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+{% extends "discussions/base.html" %}
+
+{% block main_content %}
+<form method="GET" action="{% url 'discussions:discussion_list' %}" class="search-container">
+    <input type="text" name="q" placeholder="Search posts by title" class="search-input" value="{{ query }}">
+    <button type="submit" class="search-btn">Search</button>
+</form>
+<h2>Latest Discussions</h2>
+<div class="discussions-container">
+    {% for discussion in latest_discussions %}
+        <div class="discussion-preview">
+            <h3>
+                <a href="{% url 'discussions:discussion_detail' discussion.id %}" class="discussion-link">
+                    {{ discussion.title }}
+                </a>
+            </h3>
+            <div class="preview-content">
+                {{ discussion.content|truncatewords:30 }}
+            </div>
+            <div class="discussion-meta">
+                {% if discussion.author_name %}
+                    <span class="author">Posted by {{ discussion.author_name }}</span> - 
+                {% endif %}
+                <span class="date">{{ discussion.created_at|timesince }} ago</span>
+                
+                <div class="vote-section">
+                    <!-- Upvote button now includes the dynamically generated vote URL -->
+                    <button class="vote-btn upvote" 
+                            data-discussion-id="{{ discussion.id }}" 
+                            data-vote-url="{% url 'discussions:vote_discussion' discussion.id %}">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <span class="upvote-count">{{ discussion.upvotes }}</span>
+                    <!-- Downvote button updated similarly -->
+                    <button class="vote-btn downvote" 
+                            data-discussion-id="{{ discussion.id }}"
+                            data-vote-url="{% url 'discussions:vote_discussion' discussion.id %}">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <span class="downvote-count">{{ discussion.downvotes }}</span>
+                </div>
+                
+                <span class="comment-icon" data-discussion-id="{{ discussion.id }}">
+                    <i class="fas fa-comment"></i>
+                    <span class="comment-count">{{ discussion.comments.count }}</span>
+                </span>
+                <a href="{% url 'discussions:discussion_detail' discussion.id %}" class="read-more">Read more →</a>
+            </div>
+        </div>
+        
+        <!-- Comment Popup -->
+        <div class="comments-popup" id="commentsPopup-{{ discussion.id }}">
+            <div class="popup-header">
+                <h3>Comments on "{{ discussion.title }}"</h3>
+                <span class="close-popup">&times;</span>
+            </div>
+            
+            <div class="comment-list">
+                {% for comment in discussion.comments.all %}
+                    <div class="comment-item" id="popup-comment-{{ comment.id }}">
+                        <div class="comment-meta">
+                            <strong>{{ comment.author_name|default:"Anonymous" }}</strong> - 
+                            <small>{{ comment.created_at|timesince }} ago</small>
+                        </div>
+                        <p>{{ comment.content }}</p>
+                        
+                        <div class="comment-actions">
+                            <button class="reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
+                        </div>
+                        
+                        <form class="reply-form" id="popup-reply-form-{{ comment.id }}" method="post" action="{% url 'discussions:discussion_detail' discussion.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="reply_to" value="{{ comment.id }}">
+                            <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                            <textarea name="content" placeholder="Write your reply..." required></textarea>
+                            <button type="submit" class="submit-btn">Post Reply</button>
+                        </form>
+                        
+                        {% if comment.replies.all %}
+                            <div class="replies">
+                                {% for reply in comment.replies.all %}
+                                    <div class="comment-item">
+                                        <div class="comment-meta">
+                                            <strong>{{ reply.author_name|default:"Anonymous" }}</strong> - 
+                                            <small>{{ reply.created_at|timesince }} ago</small>
+                                        </div>
+                                        <p>{{ reply.content }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p>No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+            
+            <form class="comment-form" method="post" action="{% url 'discussions:discussion_detail' discussion.id %}">
+                {% csrf_token %}
+                <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                <textarea name="content" placeholder="Write your comment..." required></textarea>
+                <button type="submit" class="submit-btn">Post Comment</button>
+            </form>
+        </div>
+    {% empty %}
+        <p class="no-discussions">No discussions yet. Be the first to start one!</p>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if latest_discussions.has_previous %}
+        <a href="?page=1" class="page-link">&laquo; first</a>
+        <a href="?page={{ latest_discussions.previous_page_number }}" class="page-link">previous</a>
+    {% endif %}
+
+    <span class="current-page">
+        Page {{ latest_discussions.number }} of {{ latest_discussions.paginator.num_pages }}
+    </span>
+
+    {% if latest_discussions.has_next %}
+        <a href="?page={{ latest_discussions.next_page_number }}" class="page-link">next</a>
+        <a href="?page={{ latest_discussions.paginator.num_pages }}" class="page-link">last &raquo;</a>
+    {% endif %}
+</div>
+<!-- Popup Overlay -->
+<div class="popup-overlay"></div>
+
+<style>
+    .discussions-container {
+        max-height: 80vh;
+        overflow-y: auto;
+        padding-right: 15px;
+    }
+    .discussions-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .discussions-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    .discussions-container::-webkit-scrollbar-thumb {
+        background: var(--color3);
+        border-radius: 10px;
+    }
+    .discussions-container::-webkit-scrollbar-thumb:hover {
+        background: var(--color2);
+    }
+    .discussion-preview {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    .discussion-preview:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .discussion-link {
+        color: var(--color3);
+        text-decoration: none;
+    }
+    .discussion-link:hover {
+        text-decoration: underline;
+    }
+    .preview-content {
+        margin: 10px 0;
+        color: #555;
+        line-height: 1.6;
+    }
+    .discussion-meta {
+        font-size: 0.9em;
+        color: #777;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .vote-section {
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+    }
+    .vote-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        color: #777;
+        font-size: 1em;
+        transition: all 0.2s;
+    }
+    .vote-btn:hover {
+        transform: scale(1.2);
+    }
+    .upvote:hover {
+        color: #4CAF50;
+    }
+    .downvote:hover {
+        color: #F44336;
+    }
+    .upvote-count,
+    .downvote-count {
+        margin: 0 5px;
+        font-weight: bold;
+        min-width: 20px;
+        text-align: center;
+    }
+    .vote-btn.active {
+        color: var(--color3);
+    }
+    .comment-icon {
+        cursor: pointer;
+        color: var(--color3);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .comment-icon:hover {
+        color: var(--color2);
+    }
+    .comment-count {
+        font-size: 0.9em;
+    }
+    .read-more {
+        margin-left: auto;
+        color: var(--color3);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .no-discussions {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+        font-style: italic;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 30px 0;
+        gap: 10px;
+    }
+    .page-link {
+        padding: 8px 16px;
+        text-decoration: none;
+        color: var(--color3);
+        border: 1px solid var(--color3);
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+    .page-link:hover {
+        background: var(--color3);
+        color: white;
+    }
+    .current-page {
+        padding: 8px 16px;
+    }
+</style>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Voting functionality - Modified to use dynamic URL from data attribute
+        document.querySelectorAll('.vote-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const discussionId = this.getAttribute('data-discussion-id');
+                const voteUrl = this.getAttribute('data-vote-url');
+                const isUpvote = this.classList.contains('upvote');
+                const csrftoken = getCookie('csrftoken');
+                
+                fetch(voteUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        vote_type: isUpvote ? 'upvote' : 'downvote'
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const voteSection = this.closest('.vote-section');
+                        const upvoteCountEl = voteSection.querySelector('.upvote-count');
+                        const downvoteCountEl = voteSection.querySelector('.downvote-count');
+                        if (upvoteCountEl) upvoteCountEl.textContent = data.upvotes;
+                        if (downvoteCountEl) downvoteCountEl.textContent = data.downvotes;
+                        
+                        // Visual feedback
+                        this.classList.add('active');
+                        setTimeout(() => this.classList.remove('active'), 500);
+                    } else {
+                        console.error("Vote error:", data.error);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+
+        // Comment popup functionality remains unchanged…
+        document.querySelectorAll('.comment-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const discussionId = this.getAttribute('data-discussion-id');
+                const popup = document.getElementById(`commentsPopup-${discussionId}`);
+                const overlay = document.querySelector('.popup-overlay');
+                
+                popup.style.display = 'block';
+                overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                popup.querySelector('.close-popup').addEventListener('click', () => {
+                    popup.style.display = 'none';
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                });
+                
+                overlay.addEventListener('click', () => {
+                    popup.style.display = 'none';
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                });
+                
+                initReplyButtons(popup);
+            });
+        });
+
+        function initReplyButtons(container) {
+            container.querySelectorAll('.reply-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.getAttribute('data-comment-id');
+                    const replyForm = container.querySelector(`#popup-reply-form-${commentId}`);
+                    
+                    container.querySelectorAll('.reply-form').forEach(form => {
+                        if (form.id !== `popup-reply-form-${commentId}`) {
+                            form.style.display = 'none';
+                        }
+                    });
+                    
+                    replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+        }
+
+        // AJAX form submission for comments remains unchanged…
+        document.querySelectorAll('.comment-form, .reply-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const discussionId = this.closest('.comments-popup') ? 
+                    this.closest('.comments-popup').id.split('-')[1] : 
+                    window.location.pathname.split('/').filter(Boolean).pop();
+                const isPopup = this.closest('.comments-popup');
+                const isReply = this.classList.contains('reply-form');
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (isPopup) {
+                            const popup = document.getElementById(`commentsPopup-${discussionId}`);
+                            const commentList = popup.querySelector('.comment-list');
+                            
+                            if (isReply) {
+                                const parentComment = popup.querySelector(`#popup-comment-${data.parent_id}`);
+                                let repliesContainer = parentComment.querySelector('.replies');
+                                
+                                if (!repliesContainer) {
+                                    repliesContainer = document.createElement('div');
+                                    repliesContainer.className = 'replies';
+                                    parentComment.appendChild(repliesContainer);
+                                }
+                                
+                                const newReply = document.createElement('div');
+                                newReply.className = 'comment-item';
+                                newReply.innerHTML = `
+                                    <div class="comment-meta">
+                                        <strong>${data.author_name || 'Anonymous'}</strong> - 
+                                        <small>just now</small>
+                                    </div>
+                                    <p>${data.content}</p>
+                                `;
+                                repliesContainer.appendChild(newReply);
+                            } else {
+                                const noCommentsMsg = popup.querySelector('.comment-list > p');
+                                if (noCommentsMsg) {
+                                    noCommentsMsg.remove();
+                                }
+                                
+                                const newComment = document.createElement('div');
+                                newComment.className = 'comment-item';
+                                newComment.id = `popup-comment-${data.id}`;
+                                newComment.innerHTML = `
+                                    <div class="comment-meta">
+                                        <strong>${data.author_name || 'Anonymous'}</strong> - 
+                                        <small>just now</small>
+                                    </div>
+                                    <p>${data.content}</p>
+                                    <div class="comment-actions">
+                                        <button class="reply-btn" data-comment-id="${data.id}">Reply</button>
+                                    </div>
+                                    <form class="reply-form" id="popup-reply-form-${data.id}" method="post" action="${this.action}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="reply_to" value="${data.id}">
+                                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                                        <textarea name="content" placeholder="Write your reply..." required></textarea>
+                                        <button type="submit" class="submit-btn">Post Reply</button>
+                                    </form>
+                                `;
+                                commentList.insertBefore(newComment, commentList.firstChild);
+                                initReplyButtons(popup);
+                            }
+                        }
+                        
+                        this.reset();
+                        
+                        const commentCount = document.querySelector(`[data-discussion-id="${discussionId}"] .comment-count`);
+                        if (commentCount) {
+                            commentCount.textContent = parseInt(commentCount.textContent) + 1;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,296 @@
+{% extends "discussions/base.html" %}
+
+{% block main_content %}
+    <div class="discussion-full">
+        <h2>{{ discussion.title }}</h2>
+        <div class="discussion-meta">
+            {% if discussion.author_name %}
+                Posted by {{ discussion.author_name }} - 
+            {% endif %}
+            {{ discussion.created_at|timesince }} ago
+        </div>
+        <div class="discussion-content">
+            {{ discussion.content|linebreaks }}
+        </div>
+        
+        <div class="comments-section">
+            <h3>Comments ({{ discussion.comments.count }})</h3>
+            <div class="comment-list">
+                {% for comment in discussion.comments.all %}
+                    {% if not comment.parent %}
+                        {% include "discussions/comment_item.html" with comment=comment %}
+                    {% endif %}
+                {% empty %}
+                    <p class="no-comments">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <a href="{% url 'discussions:discussion_list' %}" class="back-btn">Back to discussions</a>
+    </div>
+
+    <style>
+        .discussion-full {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .discussion-meta {
+            color: #777;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .discussion-content {
+            margin-bottom: 30px;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        .comments-section {
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .comment-list {
+            margin: 20px 0;
+        }
+        
+        .no-comments {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .comment-form {
+            margin-top: 30px;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .comment-author-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--color3);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: var(--color2);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Comment item styles */
+        .comment-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 3px solid var(--color3);
+        }
+        
+        .comment-meta {
+            margin-bottom: 5px;
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .comment-actions {
+            margin-top: 10px;
+        }
+        
+        .reply-btn {
+            background: none;
+            border: none;
+            color: var(--color3);
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+        
+        .reply-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .reply-form {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        
+        .replies {
+            margin-left: 30px;
+            margin-top: 15px;
+            border-left: 2px solid #ddd;
+            padding-left: 15px;
+        }
+        
+        .submit-btn {
+            background: var(--color3);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: var(--color2);
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle reply button clicks
+            document.querySelectorAll('.reply-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.getAttribute('data-comment-id');
+                    const replyForm = document.getElementById(`reply-form-${commentId}`);
+                    
+                    // Hide all other reply forms
+                    document.querySelectorAll('.reply-form').forEach(form => {
+                        if (form.id !== `reply-form-${commentId}`) {
+                            form.style.display = 'none';
+                        }
+                    });
+                    
+                    // Toggle current reply form
+                    replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
+                });
+            });
+            
+            // Handle form submissions
+            document.querySelectorAll('.comment-form, .reply-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    const isReply = this.classList.contains('reply-form');
+                    
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (isReply) {
+                                // Handle reply
+                                const parentComment = document.getElementById(`comment-${data.parent_id}`);
+                                let repliesContainer = parentComment.querySelector('.replies');
+                                
+                                if (!repliesContainer) {
+                                    repliesContainer = document.createElement('div');
+                                    repliesContainer.className = 'replies';
+                                    parentComment.appendChild(repliesContainer);
+                                }
+                                
+                                const newReply = document.createElement('div');
+                                newReply.className = 'comment-item';
+                                newReply.id = `comment-${data.id}`;
+                                newReply.innerHTML = `
+                                    <div class="comment-meta">
+                                        <strong>${data.author_name || 'Anonymous'}</strong> - 
+                                        <small>just now</small>
+                                    </div>
+                                    <p>${data.content}</p>
+                                    <div class="comment-actions">
+                                        <button class="reply-btn" data-comment-id="${data.id}">Reply</button>
+                                    </div>
+                                    <form class="reply-form" id="reply-form-${data.id}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="reply_to" value="${data.id}">
+                                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                                        <textarea name="content" placeholder="Write your reply..." required></textarea>
+                                        <button type="submit" class="submit-btn">Post Reply</button>
+                                    </form>
+                                `;
+                                repliesContainer.appendChild(newReply);
+                            } else {
+                                // Handle new top-level comment
+                                const commentList = document.querySelector('.comment-list');
+                                const noCommentsMsg = document.querySelector('.no-comments');
+                                
+                                if (noCommentsMsg) {
+                                    noCommentsMsg.remove();
+                                }
+                                
+                                const newComment = document.createElement('div');
+                                newComment.className = 'comment-item';
+                                newComment.id = `comment-${data.id}`;
+                                newComment.innerHTML = `
+                                    <div class="comment-meta">
+                                        <strong>${data.author_name || 'Anonymous'}</strong> - 
+                                        <small>just now</small>
+                                    </div>
+                                    <p>${data.content}</p>
+                                    <div class="comment-actions">
+                                        <button class="reply-btn" data-comment-id="${data.id}">Reply</button>
+                                    </div>
+                                    <form class="reply-form" id="reply-form-${data.id}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="reply_to" value="${data.id}">
+                                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                                        <textarea name="content" placeholder="Write your reply..." required></textarea>
+                                        <button type="submit" class="submit-btn">Post Reply</button>
+                                    </form>
+                                `;
+                                commentList.insertBefore(newComment, commentList.firstChild);
+                            }
+                            
+                            // Reset the form
+                            this.reset();
+                            
+                            // Hide the reply form if it was a reply
+                            if (isReply) {
+                                this.style.display = 'none';
+                            }
+                            
+                            // Update comment count
+                            const commentCount = document.querySelector('.comments-section h3');
+                            const currentCount = parseInt(commentCount.textContent.match(/\d+/)[0]);
+                            commentCount.textContent = `Comments (${currentCount + 1})`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

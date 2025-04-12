@@ -1,0 +1,28 @@
+<div class="comments-popup" id="commentsPopup-{{ discussion.id }}">
+    <div class="popup-header">
+        <h3>Comments on "{{ discussion.title }}"</h3>
+        <span class="close-popup">&times;</span>
+    </div>
+    
+    <div class="comment-list">
+        {% for comment in discussion.comments.all %}
+            <div class="comment-item">
+                <div class="comment-meta">
+                    <strong>{{ comment.author_name|default:"Anonymous" }}</strong> - 
+                    <small>{{ comment.created_at|timesince }} ago</small>
+                </div>
+                <p>{{ comment.content }}</p>
+            </div>
+        {% empty %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+    </div>
+    
+    <form class="comment-form" method="post" action="{% url 'discussions:discussion_detail' discussion.id %}" data-discussion-id="{{ discussion.id }}">
+        {% csrf_token %}
+        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+        <textarea name="content" placeholder="Write your comment..." required></textarea>
+        <button type="submit" class="submit-btn">Post Comment</button>
+    </form>
+</div>
+<div class="popup-overlay"></div>

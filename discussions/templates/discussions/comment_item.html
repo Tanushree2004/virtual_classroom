@@ -1,0 +1,27 @@
+<div class="comment-item" id="comment-{{ comment.id }}">
+    <div class="comment-meta">
+        <strong>{{ comment.author_name|default:"Anonymous" }}</strong> - 
+        <small>{{ comment.created_at|timesince }} ago</small>
+    </div>
+    <p>{{ comment.content }}</p>
+    
+    <div class="comment-actions">
+        <button class="reply-btn" data-comment-id="{{ comment.id }}">Reply</button>
+    </div>
+    
+    <form class="reply-form" id="reply-form-{{ comment.id }}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="reply_to" value="{{ comment.id }}">
+        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+        <textarea name="content" placeholder="Write your reply..." required></textarea>
+        <button type="submit" class="submit-btn">Post Reply</button>
+    </form>
+    
+    {% if comment.replies.all %}
+        <div class="replies">
+            {% for reply in comment.replies.all %}
+                {% include "discussions/comment_item.html" with comment=reply %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

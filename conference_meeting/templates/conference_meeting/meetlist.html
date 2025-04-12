@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="meetings-container">
+    <h2 class="heading">Meetings</h2>
+    {% if user.role == "Instructor" or user.role == "Admin"%}
+    <div class="create-meeting-btn">
+        <a href="{% url 'conference_meeting:create_meeting' %}" class="btn create-btn">+ Create New Meeting</a>
+    </div>
+    {% endif %}
+    <div class="meeting-list">
+        {% if meetings %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Class Group</th>
+                        {% if user.role == "Student" %}
+                        <th>Host</th>
+                        {% endif %}
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for meeting in meetings %}
+                    <!--tr class="{% if assignment.deadline < now %}late{% else %}on-time{% endif %}"-->
+                        <td>{{ meeting.title }}</td>
+                        <td>{{ meeting.class_group }}</td>
+                        {% if user.role == "Student" %}
+                        <td>{{ meeting.host }}</td>
+                        {% endif %}
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <a href="#" class="btn view-btn">View</a>
+                            {% if user.role == "Instructor" %}
+                                <a href="#" class="btn extend-btn">Extend</a>
+                                <form method="POST" action="#" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this assignment?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn delete-btn">Delete</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-meetings">No meetings available.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .meetings-container {
+        max-width: 1000px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .heading {
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .create-meeting-btn {
+        text-align: right;
+        margin-bottom: 15px;
+    }
+
+    .create-btn {
+        padding: 10px 15px;
+        background: #28a745;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .create-btn:hover {
+        background: #1e7e34;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background: #007bff;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        margin: 5px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .view-btn {
+        background: #28a745;
+        color: white;
+    }
+
+    .extend-btn {
+        background: #ff9800;
+        color: white;
+    }
+
+    .delete-btn {
+        background: red;
+        color: white;
+    }
+
+    .no-meetings {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: gray;
+        margin-top: 20px;
+    }
+
+    .delete-form {
+        display: inline;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("Meetinglist page loaded successfully!");
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+/*document.addEventListener("DOMContentLoaded", () => {
+
+    if (!meetingId) {
+        alert("Meeting ID missing. Reconnecting...");
+        window.location.href = "/conference_meeting/lobby/";
+    }
+
+
+    let form = document.getElementById('lobby__form');
+
+    let displayName = sessionStorage.getItem('display_name');
+
+    if (displayName) {
+        form.name.value = displayName;
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const displayName = document.getElementById('name').value.trim();
+        const roomPassword = document.getElementById('room_password').value.trim();
+
+        if (!displayName || !roomPassword) {
+            alert("All fields need to be completed");
+            return;
+        }
+        sessionStorage.setItem('display_name', displayName);
+        sessionStorage.setItem('room_password', roomPassword);
+
+        window.location = `/conference_meeting/lobby/room/${meetingId}/`;
+    })
+
+
+/*document.getElementById('lobby__form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    let meetingId = document.getElementById('meeting_id').value;
+    let name = document.getElementById('name').value;
+    let roomPassword = document.getElementById('room_password').value;
+
+    if (!meetingId || !name || !roomPassword) {
+        alert("Please fill in all fields!");
+        return;
+    }
+
+    let roomURL = `/conference_meeting/lobby/room/${meetingId}?meeting_id=${meetingId}&name=${encodeURIComponent(name)}&room_password=${encodeURIComponent(roomPassword)}`;
+
+    window.location.href = roomURL; // Redirect correctly
+});
+
+let form = document.getElementById('lobby__form');
+
+let displayName = sessionStorage.getItem('display_name');
+
+if(displayName) {
+    form.name.value = displayName;
+}
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('display_name', e.target.name.value);
+    let inviteCode = e.target.room_password.value;
+    if(!inviteCode) {
+        inviteCode = String(Math.floor(Math.random()*10000));
+    }
+    //window.history.replaceState({},'','/conference_meeting/');
+    window.location.href = `${window.location.origin}/conference_meeting/lobby/room/?room=${inviteCode}`;
+    //window.location.replace("/conference_meeting/lobby/room/?room=" + inviteCode);
+
+})*/
+
+
+let form = document.getElementById('lobby__form');
+
+let displayName = sessionStorage.getItem('display_name');
+
+if(displayName) {
+    form.name.value = displayName;
+}
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    sessionStorage.setItem('display_name', e.target.name.value);
+    let inviteCode = e.target.room_password.value;
+    if(!inviteCode) {
+        inviteCode = String(Math.floor(Math.random()*10000));
+    }
+    window.location = `room/?room=${inviteCode}`;
+})
