@@ -45,7 +45,7 @@
                 <input type="hidden" name="meeting_id" value="{{ meeting_id }}">
                  <div class="form__field__wrapper">
                      <label>Registered username</label>
-                     <input type="text" name="name" required placeholder="Enter your display name..." />
+                     <input type="text" name="name" value="{{user_name}}"required placeholder="{{user_name}}" readonly />
                  </div>
  
                  <div class="form__field__wrapper">
@@ -63,5 +63,6 @@
      </main>
     
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 <script type="text/javascript" src="{% static 'js/lobby.js' %}"></script>
 </html>
