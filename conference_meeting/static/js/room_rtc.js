@@ -12,7 +12,17 @@ let client;
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
-let roomId = urlParams.get('room');
+let encryptedRoomId = urlParams.get('room');
+
+encryptedRoomId = decodeURIComponent(encryptedRoomId);
+let secretKey = CryptoJS.enc.Utf8.parse("your-secret-key");
+let iv = CryptoJS.enc.Utf8.parse("1234567890123456");
+let decrypted = CryptoJS.AES.decrypt(encryptedRoomId, secretKey, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+});
+let roomId = decrypted.toString(CryptoJS.enc.Utf8)
 
 if (!roomId) {
     roomId = 'main';
