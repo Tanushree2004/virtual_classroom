@@ -272,8 +272,8 @@ def submit_exam(request, exam_id):
                 answer_text = request.POST.get(f'question_{question.id}_text')
                 answer_files = request.FILES.getlist(f'question_{question.id}_files')
 
-                if answer_text and answer_files:
-                    return render(request, 'exam/error_exam.html', {'message': 'Cannot submit both text and file!'})
+                #if answer_text and answer_files:
+                #    return render(request, 'exam/error_exam.html', {'message': 'Cannot submit both text and file!'})
 
                 uploaded_file_urls = []
                 upload_dir = os.path.join(settings.MEDIA_ROOT, 'examuploads')
