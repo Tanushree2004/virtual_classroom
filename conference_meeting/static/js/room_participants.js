@@ -1,4 +1,16 @@
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+let encryptedRoomId = urlParams.get('room');
 
+encryptedRoomId = decodeURIComponent(encryptedRoomId);
+let secretKey = CryptoJS.enc.Utf8.parse("your-secret-key");
+let iv = CryptoJS.enc.Utf8.parse("1234567890123456");
+let decrypted = CryptoJS.AES.decrypt(encryptedRoomId, secretKey, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+});
+let roomId = decrypted.toString(CryptoJS.enc.Utf8)
 // WebSocket connection for managing participants and messages
 //let participantSocket = new WebSocket(`ws://${window.location.host}/ws/conference_meeting/${roomId}/`);
 let ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
