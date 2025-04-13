@@ -4,9 +4,10 @@
     <div class="discussion-full">
         <h2>{{ discussion.title }}</h2>
         <div class="discussion-meta">
-            {% if discussion.author_name %}
-                Posted by {{ discussion.author_name }} - 
-            {% endif %}
+            {% if discussion.author %}
+    Posted by {{ discussion.author.username }} - 
+{% endif %}
+
             {{ discussion.created_at|timesince }} ago
         </div>
         <div class="discussion-content">
@@ -234,7 +235,7 @@
                                     <form class="reply-form" id="reply-form-${data.id}" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="reply_to" value="${data.id}">
-                                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                                        <!--input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input"-->
                                         <textarea name="content" placeholder="Write your reply..." required></textarea>
                                         <button type="submit" class="submit-btn">Post Reply</button>
                                     </form>
@@ -264,7 +265,7 @@
                                     <form class="reply-form" id="reply-form-${data.id}" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="reply_to" value="${data.id}">
-                                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                                        <!--input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input"-->
                                         <textarea name="content" placeholder="Write your reply..." required></textarea>
                                         <button type="submit" class="submit-btn">Post Reply</button>
                                     </form>
