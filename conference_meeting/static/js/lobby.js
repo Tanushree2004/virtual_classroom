@@ -1,36 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-    if (!meetingId) {
-        alert("Meeting ID missing. Reconnecting...");
-        window.location.href = "/conference_meeting/lobby/";
-    }
-
-
-    let form = document.getElementById('lobby__form');
-
-    let displayName = sessionStorage.getItem('display_name');
-
-    if (displayName) {
-        form.name.value = displayName;
-    }
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const displayName = document.getElementById('name').value.trim();
-        const roomPassword = document.getElementById('room_password').value.trim();
-
-        if (!displayName || !roomPassword) {
-            alert("All fields need to be completed");
-            return;
-        }
-        sessionStorage.setItem('display_name', displayName);
-        sessionStorage.setItem('room_password', roomPassword);
-
-        window.location = `/conference_meeting/lobby/room/${meetingId}/`;
-    })
-
-
 /*document.getElementById('lobby__form').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the default form submission
 
