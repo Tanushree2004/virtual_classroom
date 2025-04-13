@@ -8,7 +8,8 @@
         {% for comment in discussion.comments.all %}
             <div class="comment-item">
                 <div class="comment-meta">
-                    <strong>{{ comment.author_name|default:"Anonymous" }}</strong> - 
+                    <strong>{{ comment.author.username|default:"Anonymous" }}</strong> -
+
                     <small>{{ comment.created_at|timesince }} ago</small>
                 </div>
                 <p>{{ comment.content }}</p>
@@ -20,7 +21,7 @@
     
     <form class="comment-form" method="post" action="{% url 'discussions:discussion_detail' discussion.id %}" data-discussion-id="{{ discussion.id }}">
         {% csrf_token %}
-        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+        <!--input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input-->
         <textarea name="content" placeholder="Write your comment..." required></textarea>
         <button type="submit" class="submit-btn">Post Comment</button>
     </form>
