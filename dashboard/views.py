@@ -255,7 +255,7 @@ def edit_user(request, user_id):
             if CustomUser.objects.filter(username=username).exclude(id=user.id).exists():
                 messages.error(request, 'This username is already taken.')
                 return render(request, 'edit_user.html', {'form': form})
-
+            
             updated_user.email = email
             updated_user.username = username
 
@@ -263,7 +263,9 @@ def edit_user(request, user_id):
             if request.user.role != "Admin" and updated_user.role == "Admin":
                 messages.error(request, "You cannot assign an Admin role.")
                 return redirect('edit_user', user_id=user.id)
-
+            new_password = form.cleaned_data.get('password1')
+            if new_password:
+                updated_user.password = make_password(new_password)
             updated_user.save()
             messages.success(request, 'User updated successfully.')
             return redirect('user_list')
