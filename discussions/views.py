@@ -10,13 +10,14 @@ import json
 from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.utils.text import slugify
-
+from django.contrib.auth.decorators import login_required
+@login_required
 def discussion_list(request):
     main_categories = Category.objects.filter(parent__isnull=True)
     query = request.GET.get('q', '')
     if query:
         all_discussions = Discussion.objects.filter(
-            Q(title__icontains=query) | Q(author_name__icontains=query)
+            Q(title__icontains=query) | Q(author__username__icontains=query)
         ).order_by('-created_at')
     else:
         all_discussions = Discussion.objects.all().order_by('-created_at')
@@ -32,7 +33,7 @@ def discussion_list(request):
     }
     return render(request, 'discussions/discussion_list.html', context)
 
-
+@login_required
 def category_discussions(request, slug):
     category = get_object_or_404(Category, slug=slug)
     discussions = Discussion.objects.filter(category=category).order_by('-created_at')
@@ -42,20 +43,20 @@ def category_discussions(request, slug):
         'discussions': discussions,
     }
     return render(request, 'discussions/category_discussions.html', context)
-
+@login_required
 def create_discussion(request):
     if request.method == 'POST':
         form = DiscussionForm(request.POST)
         if form.is_valid():
             discussion = form.save(commit=False)
-            discussion.author_name = request.POST.get('author_name', 'Anonymous')
+            discussion.author = request.user
             discussion.save()
             return redirect('discussions:discussion_list')
     else:
         form = DiscussionForm()
     
     return render(request, 'discussions/create_discussion.html', {'form': form})
-
+@login_required
 def discussion_detail(request, pk):
     discussion = get_object_or_404(Discussion, pk=pk)
     comments = discussion.comments.filter(parent__isnull=True).order_by('-created_at')
@@ -65,6 +66,7 @@ def discussion_detail(request, pk):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.discussion = discussion
+            comment.author = request.user
             
             # Handle replies
             reply_to = form.cleaned_data.get('reply_to')
@@ -77,7 +79,7 @@ def discussion_detail(request, pk):
             return JsonResponse({
                 'success': True,
                 'id': comment.id,
-                'author_name': comment.author_name or 'Anonymous',
+                'author_name': request.user.username,
                 'content': comment.content,
                 'created_at': comment.created_at.strftime("%b %d, %Y %I:%M %p"),
                 'is_reply': comment.is_reply,
@@ -89,7 +91,7 @@ def discussion_detail(request, pk):
         'comments': comments,
         'comment_form': CommentForm()
     })
-
+@login_required
 @require_POST
 def vote_discussion(request, pk):
     discussion = get_object_or_404(Discussion, pk=pk)
@@ -118,7 +120,7 @@ def vote_discussion(request, pk):
         'upvotes': discussion.upvotes,
         'downvotes': discussion.downvotes
     })
-
+@login_required
 @require_POST
 def add_category(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
