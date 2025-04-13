@@ -11,14 +11,17 @@ from django.utils.timezone import now
 from .models import Meeting, Recording
 from django.contrib.auth import get_user_model
 
+@login_required
 def lobby(request):
-    return render(request, 'conference_meeting/lobby.html')
+    user_name = request.user.username
+    return render(request, 'conference_meeting/lobby.html',{'user_name':user_name})
 
+@login_required
 def room(request):
     print("🚀 Room view is being called!")
-  
+    user_name = request.user.username
     room_name = request.GET.get('room_password','DefaultRoom')
-    return render(request, 'conference_meeting/room.html', {'room_name':room_name})
+    return render(request, 'conference_meeting/room.html', {'room_name':room_name, 'user_name':user_name})
 
 @login_required
 def meetlist(request):
@@ -52,20 +55,20 @@ def create_meeting(request):
 
 @csrf_exempt
 def upload_recording(request):
-    print("🚀 upload_recording view HIT")
-    print("📦 Method:", request.method)
-    print("📦 FILES:", request.FILES)
-    print("📦 POST:", request.POST)
+    print(" upload_recording view HIT")
+    print(" Method:", request.method)
+    print(" FILES:", request.FILES)
+    print(" POST:", request.POST)
     if request.method == 'POST' and request.FILES.get('recording'):
         recording = request.FILES['recording']
         meeting_id = request.POST.get('meeting_id')
         user_id = request.POST.get('recorded_by')
 
-        print("✅ Parsed meeting_id:", meeting_id)
-        print("✅ Parsed user_id:", user_id)
+        print(" Parsed meeting_id:", meeting_id)
+        print(" Parsed user_id:", user_id)
 
         if not meeting_id or not user_id:
-            print("❌ Missing meeting_id or user_id")
+            print(" Missing meeting_id or user_id")
             return JsonResponse({'error': 'Missing data'}, status=400)
 
         User = get_user_model()
@@ -73,10 +76,10 @@ def upload_recording(request):
         try:
             meeting = Meeting.objects.get(meeting_id=meeting_id)
             user = User.objects.get(id=user_id)
-            print("✅ Found meeting and user")
+            print(" Found meeting and user")
         except (Meeting.DoesNotExist, User.DoesNotExist):
-            print("❌ Meeting not found")
-            print("❌ User not found")
+            print(" Meeting not found")
+            print(" User not found")
             return JsonResponse({'error': 'Invalid meeting or user'}, status=404)
 
         save_dir = os.path.join(settings.MEDIA_ROOT, 'classrecordings')
@@ -97,5 +100,5 @@ def upload_recording(request):
         print("Saving recording for", meeting, user)
         return JsonResponse({'message': 'Recording uploaded successfully.'})
     
-    print("❌ Invalid request: Method or file missing")
+    print(" Invalid request: Method or file missing")
     return JsonResponse({'error': 'Invalid request'}, status=400)
