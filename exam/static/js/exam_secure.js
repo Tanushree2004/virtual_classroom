@@ -47,6 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
             fullscreenPrompt.style.display = "none";
             examContainer.style.display = "block";
 
+            //changed
+            setTimeout(() => {
+                allowResizeCheck = true;
+            }, 2000);
+
         } catch (err) {
             alert("Failed to enter fullscreen: " + err.message);
         }
@@ -85,11 +90,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     
     let resizeCount = 0;
+    let allowResizeCheck = false;
 
     window.addEventListener("resize", () => {
-        resizeCount++;
+        /*resizeCount++;
         // Allow first resize caused by fullscreen
         if (resizeCount > 1) {
+            submitIfNeeded("window resized");
+        }*/
+        //Changed code
+        if(!allowResizeCheck) return;
+        resizeCount++;
+        if(resizeCount>0) {
             submitIfNeeded("window resized");
         }
     });
