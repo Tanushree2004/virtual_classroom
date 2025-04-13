@@ -3,11 +3,7 @@ from django import forms
 from .models import Discussion, Comment, Category
 
 class DiscussionForm(forms.ModelForm):
-    author_name = forms.CharField(
-        max_length=100,
-        required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Your name (optional)'})
-    )
+    
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
         required=False,
@@ -17,18 +13,19 @@ class DiscussionForm(forms.ModelForm):
     class Meta:
         model = Discussion
         fields = ['title', 'content', 'category']
+        exclude = ['author', 'created_at', 'upvotes', 'downvotes']
 
 class CommentForm(forms.ModelForm):
-    author_name = forms.CharField(
+    '''author_name = forms.CharField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Your name (optional)'})
-    )
+    )'''
     reply_to = forms.IntegerField(widget=forms.HiddenInput(), required=False)
     
     class Meta:
         model = Comment
-        fields = ['content', 'author_name']
+        fields = ['content']
 
 
 # seed_categories.py
