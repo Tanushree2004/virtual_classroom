@@ -1,3 +1,4 @@
+
 {% extends "discussions/base.html" %}
 
 {% block main_content %}
@@ -14,9 +15,10 @@
             {{ discussion.content|truncatewords:30 }}
         </div>
         <div class="discussion-meta">
-            {% if discussion.author_name %}
-                <span class="author">Posted by {{ discussion.author_name }}</span> - 
-            {% endif %}
+            {% if discussion.author %}
+    <span class="author">Posted by {{ discussion.author.username }}</span> - 
+{% endif %}
+
             <span class="date">{{ discussion.created_at|timesince }} ago</span>
             
             <div class="vote-section">
@@ -54,7 +56,7 @@
             {% for comment in discussion.comments.all %}
                 <div class="comment-item" id="popup-comment-{{ comment.id }}">
                     <div class="comment-meta">
-                        <strong>{{ comment.author_name|default:"Anonymous" }}</strong> - 
+                        <strong>{{ comment.author.username|default:"Anonymous" }}</strong> - 
                         <small>{{ comment.created_at|timesince }} ago</small>
                     </div>
                     <p>{{ comment.content }}</p>
@@ -66,7 +68,7 @@
                     <form class="reply-form" id="popup-reply-form-{{ comment.id }}" method="post" action="{% url 'discussions:discussion_detail' discussion.id %}">
                         {% csrf_token %}
                         <input type="hidden" name="reply_to" value="{{ comment.id }}">
-                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                        <!--input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input"-->
                         <textarea name="content" placeholder="Write your reply..." required></textarea>
                         <button type="submit" class="submit-btn">Post Reply</button>
                     </form>
@@ -76,7 +78,7 @@
                             {% for reply in comment.replies.all %}
                                 <div class="comment-item">
                                     <div class="comment-meta">
-                                        <strong>{{ reply.author_name|default:"Anonymous" }}</strong> - 
+                                        <strong>{{ reply.author.username|default:"Anonymous" }}</strong> - 
                                         <small>{{ reply.created_at|timesince }} ago</small>
                                     </div>
                                     <p>{{ reply.content }}</p>
@@ -92,7 +94,7 @@
         
         <form class="comment-form" method="post" action="{% url 'discussions:discussion_detail' discussion.id %}">
             {% csrf_token %}
-            <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+            <!--input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input"-->
             <textarea name="content" placeholder="Write your comment..." required></textarea>
             <button type="submit" class="submit-btn">Post Comment</button>
         </form>
@@ -371,7 +373,7 @@
                                     <form class="reply-form" id="popup-reply-form-${data.id}" method="post" action="${this.action}">
                                         {% csrf_token %}
                                         <input type="hidden" name="reply_to" value="${data.id}">
-                                        <input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input">
+                                        <!--input type="text" name="author_name" placeholder="Your name (optional)" class="comment-author-input"-->
                                         <textarea name="content" placeholder="Write your reply..." required></textarea>
                                         <button type="submit" class="submit-btn">Post Reply</button>
                                     </form>
