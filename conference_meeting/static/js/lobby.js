@@ -1,4 +1,4 @@
-/*document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
     if (!meetingId) {
         alert("Meeting ID missing. Reconnecting...");
@@ -85,5 +85,14 @@ form.addEventListener('submit', (e) => {
     if(!inviteCode) {
         inviteCode = String(Math.floor(Math.random()*10000));
     }
-    window.location = `room/?room=${inviteCode}`;
-})
+    let secretKey = CryptoJS.enc.Utf8.parse("your-secret-key");
+    let iv = CryptoJS.enc.Utf8.parse("1234567890123456");
+    let encrypted = CryptoJS.AES.encrypt(inviteCode, secretKey, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    }).toString();
+    let encoded = encrypted.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    window.location = `room/?room=${encodeURIComponent(encoded)}`;
+});
+});
