@@ -1,15 +1,20 @@
+{%extends 'base.html'%}
+{% block content %}
 <!DOCTYPE html>
 <html>
   <head>
     <title>Upload Resource</title>
     <style>
-      /* Basic reset and typography */
+      /* Basic reset and typography 
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-      }
-      body {
+      }*/
+      .body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
         font-family: Arial, sans-serif;
         background-color: #f7f7f7;
         color: #333;
@@ -24,7 +29,7 @@
         font-size: 2rem;
       }
       /* Main container */
-      .container {
+      .pcontainer {
         width: 90%;
         max-width: 1100px;
         margin: 2rem auto;
@@ -74,14 +79,14 @@
       }
     </style>
   </head>
-  <body>
+  <body class="body">
     <header>
       <div class="container">
         <h1>Upload a Resource</h1>
       </div>
     </header>
 
-    <div class="container">
+    <div class="pcontainer">
       <div class="form-container">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
@@ -89,7 +94,8 @@
           <button type="submit">Upload</button>
         </form>
       </div>
-      <a href="{% url 'home' %}" class="back-link">Back to Home</a>
+      <a href="{% url 'resource_library:home' %}" class="back-link">Back to Home</a>
     </div>
   </body>
 </html>
+{%endblock%}
