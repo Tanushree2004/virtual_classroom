@@ -1,3 +1,5 @@
+{%extends 'base.html'%}
+{% block content%}
 <!DOCTYPE html>
 <html>
   <head>
@@ -170,8 +172,8 @@
             <p><em>Uploaded on: {{ resource.uploaded_at|date:"F j, Y, g:i a" }}</em></p>
             <div class="actions">
               <a href="{{ resource.file.url }}" target="_blank" class="view">View</a>
-              <a href="{% url 'resource_download' resource.id %}" class="download">Download</a>
-              <a href="{% url 'resource_delete' resource.id %}" class="delete" onclick="return confirm('Are you sure you want to delete this resource?')">Delete</a>
+              <a href="{% url 'resource_library:resource_download' resource.id %}" class="download">Download</a>
+              <a href="{% url 'resource_library:resource_delete' resource.id %}" class="delete" onclick="return confirm('Are you sure you want to delete this resource?')">Delete</a>
             </div>
           </div>
         {% empty %}
@@ -181,9 +183,10 @@
       
       <!-- Navigation buttons -->
       <div class="button-row">
-        <a href="{% url 'resource_upload' %}" class="btn">Upload Another Resource</a>
-        <a href="{% url 'home' %}" class="btn">Back to Home</a>
+        <a href="{% url 'resource_library:resource_upload' %}" class="btn">Upload Another Resource</a>
+        <a href="{% url 'resource_library:home' %}" class="btn">Back to Home</a>
       </div>
     </div>
   </body>
 </html>
+{% endblock%}
