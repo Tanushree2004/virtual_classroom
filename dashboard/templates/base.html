@@ -83,7 +83,7 @@
                         <li><a href="{% url 'threeDmodels:model_list' %}"><i class="bi bi-eye"></i> View Models</a></li>
                     </ul>
 
-                    <li><a href="resource_library:home"><i class="bi bi-file-earmark-text"></i> Resources</a></li>
+                    <li><a href="{% url 'resource_library:home' %}"><i class="bi bi-file-earmark-text"></i> Resources</a></li>
                     <li><a href="{% url 'discussions:discussion_list' %}"><i class="bi bi-chat-dots"></i> Discussion Forum</a></li>
                     {% if user.role == "Instructor" or user.role == "Student" %}
                     <li><a href="{% url 'assignments_app:dashboard_redirect_asg' %}"><i class="bi bi-list-task"></i>Assignments</a></li>
