@@ -7,6 +7,7 @@ from django.utils import timezone
 from .models import CustomUser, UserPreference, Institution
 from .forms import CustomUserForm, ProfileForm, UserPreferenceForm
 from classroom.models import Classroom
+from assignments_app.models import Assignment, Submission
 from meeting_scheduler.models import Meeting
 import requests
 import os
@@ -147,18 +148,26 @@ def student_dashboard(request):
         participants__id=user.id,  
         host__institution=user.institution
     ).order_by('scheduled_time')
+
     search_query = request.GET.get("search_query", "").strip()
     if not search_query:
         search_query = " ".join([f"{c.title} {c.description}" for c in classrooms])
 
     recommended_papers = fetch_research_papers(search_query)
     recommended_articles = fetch_news_articles(search_query)
+    classroom_titles = classrooms.values_list('title', flat=True)
+    all_assignments = Assignment.objects.filter(group__in=classroom_titles)
+    submitted_ids = Submission.objects.filter(student=user).values_list('assignment_id', flat=True)
+    now = timezone.now()
+    active_assignments = all_assignments.exclude(id__in=submitted_ids).filter(deadline__gt=now)
+
     return render(request, 'student_dashboard.html', {
         'classrooms': classrooms,
         'recommended_papers': recommended_papers,
         'recommended_articles': recommended_articles,
         'search_query': search_query,
-        'meetings': upcoming_meetings
+        'meetings': upcoming_meetings,
+        'active_assignments': active_assignments,
     })
 
 @login_required
@@ -255,7 +264,7 @@ def edit_user(request, user_id):
             if CustomUser.objects.filter(username=username).exclude(id=user.id).exists():
                 messages.error(request, 'This username is already taken.')
                 return render(request, 'edit_user.html', {'form': form})
-            
+
             updated_user.email = email
             updated_user.username = username
 
@@ -266,6 +275,7 @@ def edit_user(request, user_id):
             new_password = form.cleaned_data.get('password1')
             if new_password:
                 updated_user.password = make_password(new_password)
+
             updated_user.save()
             messages.success(request, 'User updated successfully.')
             return redirect('user_list')
