@@ -5,16 +5,19 @@
   <head>
     <title>{{ category_name }} Resources</title>
     <style>
-      /* Basic reset */
+      /* Basic reset 
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-      }
-      body {
+      }*/
+      .pbody {
         font-family: Arial, sans-serif;
         background-color: #f7f7f7;
         color: #333;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
       
       /* Header styling */
@@ -28,7 +31,7 @@
       }
       
       /* Main container */
-      .container {
+      .pcontainer {
         width: 90%;
         max-width: 1100px;
         margin: 2rem auto;
@@ -148,14 +151,14 @@
       }
     </style>
   </head>
-  <body>
+  <body class="pbody">
     <header>
-      <div class="container">
+      <div class="pcontainer">
         <h1>{{ category_name }} Resources</h1>
       </div>
     </header>
     
-    <div class="container">
+    <div class="pcontainer">
       <!-- Search bar -->
       <div class="search-bar">
         <form method="get">
