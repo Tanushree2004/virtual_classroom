@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Resource Library</title>
+    <style>
+      /* Basic reset and font import */
+      
+      
+      .body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      header {
+        background-color: #0f83b0;
+        color: #fff;
+        padding: 2rem;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 2rem;
+      }
+
+      .pcontainer {
+        width: 90%;
+        max-width: 1100px;
+        margin: 2rem auto;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        margin-top: 2rem;
+      }
+
+      .card {
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .card a {
+        color: #0f83b0;
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .card form {
+        margin-top: 1rem;
+      }
+
+      .card button {
+        background-color: #f44336;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      .card button:hover {
+        background-color: #e53935;
+      }
+
+      .button-row {
+        margin-top: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .btn {
+        background-color: #0f83b0;
+        color: #fff;
+        padding: 0.75rem 1.25rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.2s, transform 0.2s;
+      }
+
+      .btn:hover {
+        background-color: #0c6b8d;
+      }
+    </style>
+  </head>
+  <body class="body">
+    <header>
+      <div class="pcontainer">
+        <h1>Resource Library</h1>
+      </div>
+    </header>
+
+    <div class="pcontainer">
+      <div class="grid">
+        {% for category in categories %}
+          <div class="card">
+            <a href="{% url 'resource_library:resource_list' category.name %}">{{ category.name }}</a>
+            <form method="post" action="{% url 'resource_library:delete_folder' category.id %}">
+              {% csrf_token %}
+              <button type="submit" onclick="return confirm('Are you sure you want to delete this folder?')">Delete</button>
+            </form>
+          </div>
+        {% empty %}
+          <p>No folders available yet.</p>
+        {% endfor %}
+      </div>
+
+      <div class="button-row">
+        <a href="{% url 'resource_library:resource_upload' %}" class="btn">Upload New Resource</a>
+        <a href="{% url 'resource_library:add_folder' %}" class="btn">Add Folder</a>
+      </div>
+    </div>
+  </body>
+</html>
+{% endblock %}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ category_name }} Resources</title>
+    <style>
+      /* Basic reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+      }
+      
+      /* Header styling */
+      header {
+        background-color: #0f83b0;
+        color: #fff;
+        padding: 2rem;
+      }
+      header h1 {
+        font-size: 2rem;
+      }
+      
+      /* Main container */
+      .container {
+        width: 90%;
+        max-width: 1100px;
+        margin: 2rem auto;
+      }
+      
+      /* Search bar styling */
+      .search-bar {
+        margin-bottom: 1.5rem;
+      }
+      .search-bar form {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .search-bar input[type="text"] {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      .search-bar button {
+        padding: 0.5rem 1rem;
+        border: none;
+        background-color: #0f83b0;
+        color: #fff;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .search-bar button:hover {
+        background-color: #0c6b8d;
+      }
+      
+      /* Grid layout for resource cards */
+      .resource-list {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      .resource-card {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .resource-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+      }
+      .resource-card h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+      .resource-card p {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: #666;
+      }
+      
+      /* Updated actions container to use flex and gap for spacing */
+      .resource-card .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+      .resource-card .actions a {
+        text-decoration: none;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        transition: background-color 0.2s;
+      }
+      .resource-card .actions a.view {
+        background-color: #4caf50;
+        color: #fff;
+      }
+      .resource-card .actions a.view:hover {
+        background-color: #43a047;
+      }
+      .resource-card .actions a.download {
+        background-color: #0f83b0;
+        color: #fff;
+      }
+      .resource-card .actions a.download:hover {
+        background-color: #0c6b8d;
+      }
+      .resource-card .actions a.delete {
+        background-color: #f44336;
+        color: #fff;
+      }
+      .resource-card .actions a.delete:hover {
+        background-color: #e53935;
+      }
+      
+      /* Navigation buttons at bottom */
+      .button-row {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-block;
+        background-color: #0f83b0;
+        color: #fff;
+        padding: 0.75rem 1.25rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+      }
+      .btn:hover {
+        background-color: #0c6b8d;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>{{ category_name }} Resources</h1>
+      </div>
+    </header>
+    
+    <div class="container">
+      <!-- Search bar -->
+      <div class="search-bar">
+        <form method="get">
+          <input type="text" name="q" placeholder="Search by title" value="{{ search_query|default:'' }}">
+          <button type="submit">Search</button>
+        </form>
+      </div>
+      
+      <!-- Resources Grid -->
+      <div class="resource-list">
+        {% for resource in resources %}
+          <div class="resource-card">
+            <h2>{{ resource.title }}</h2>
+            <p><em>Uploaded on: {{ resource.uploaded_at|date:"F j, Y, g:i a" }}</em></p>
+            <div class="actions">
+              <a href="{{ resource.file.url }}" target="_blank" class="view">View</a>
+              <a href="{% url 'resource_download' resource.id %}" class="download">Download</a>
+              <a href="{% url 'resource_delete' resource.id %}" class="delete" onclick="return confirm('Are you sure you want to delete this resource?')">Delete</a>
+            </div>
+          </div>
+        {% empty %}
+          <p>No resources available in this category yet.</p>
+        {% endfor %}
+      </div>
+      
+      <!-- Navigation buttons -->
+      <div class="button-row">
+        <a href="{% url 'resource_upload' %}" class="btn">Upload Another Resource</a>
+        <a href="{% url 'home' %}" class="btn">Back to Home</a>
+      </div>
+    </div>
+  </body>
+</html>

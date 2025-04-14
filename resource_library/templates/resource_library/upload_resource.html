@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Upload Resource</title>
+    <style>
+      /* Basic reset and typography */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: #333;
+      }
+      /* Header styling */
+      header {
+        background-color: #0f83b0;
+        color: #fff;
+        padding: 2rem;
+      }
+      header h1 {
+        font-size: 2rem;
+      }
+      /* Main container */
+      .container {
+        width: 90%;
+        max-width: 1100px;
+        margin: 2rem auto;
+      }
+      /* Form container styles */
+      .form-container {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+      }
+      /* Form element styling */
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      form input[type="text"],
+      form input[type="file"],
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      form button {
+        padding: 0.75rem 1.25rem;
+        border: none;
+        background-color: #0f83b0;
+        color: #fff;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      form button:hover {
+        background-color: #0c6b8d;
+      }
+      /* Back link styling */
+      .back-link {
+        display: inline-block;
+        text-decoration: none;
+        color: #0f83b0;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Upload a Resource</h1>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit">Upload</button>
+        </form>
+      </div>
+      <a href="{% url 'home' %}" class="back-link">Back to Home</a>
+    </div>
+  </body>
+</html>
