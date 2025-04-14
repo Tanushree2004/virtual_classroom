@@ -1,18 +1,20 @@
+{% extends 'base.html'%}
+{% block content%}
 <!DOCTYPE html>
 <html>
   <head>
     <title>Add Folder</title>
     <style>
+      /*
       /* Basic reset and typography */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
+      
+      .pbody {
         font-family: Arial, sans-serif;
         background-color: #f7f7f7;
         color: #333;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;;
       }
       /* Header styling */
       header {
@@ -24,13 +26,13 @@
         font-size: 2rem;
       }
       /* Main container */
-      .container {
+      .pcontainer {
         width: 90%;
         max-width: 1100px;
         margin: 2rem auto;
       }
       /* Form container styles */
-      .form-container {
+      .pform-container {
         background-color: #fff;
         padding: 2rem;
         border-radius: 4px;
@@ -70,25 +72,26 @@
         text-decoration: none;
         color: #0f83b0;
         font-weight: bold;
-      }
+      }*/
     </style>
   </head>
-  <body>
+  <body class="pbody">
     <header>
-      <div class="container">
+      <div class="pcontainer">
         <h1>Add a New Folder</h1>
       </div>
     </header>
     
-    <div class="container">
-      <div class="form-container">
+    <div class="pcontainer">
+      <div class="pform-container">
         <form method="post">
           {% csrf_token %}
           {{ form.as_p }}
           <button type="submit">Create Folder</button>
         </form>
       </div>
-      <a href="{% url 'home' %}" class="back-link">Back to Home</a>
+      <a href="{% url 'resource_library:home' %}" class="back-link">Back to Home</a>
     </div>
   </body>
 </html>
+{% endblock%}
