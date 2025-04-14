@@ -18,11 +18,11 @@ def delete_folder(request, category_id):
     # Optional: Prevent deletion if resources exist in this category
     if category.resource_set.exists():
         messages.error(request, "Cannot delete folder with resources inside. Please delete resources first.")
-        return redirect('home')
+        return redirect('resource_library:home')
 
     category.delete()
     messages.success(request, "Folder deleted successfully.")
-    return redirect('home')
+    return redirect('resource_library:home')
 
 def add_folder(request):
     if request.method == 'POST':
@@ -30,7 +30,7 @@ def add_folder(request):
         if form.is_valid():
             form.save()
             # Redirect back to home after folder creation.
-            return redirect('home')
+            return redirect('resource_library:home')
     else:
         form = CategoryForm()
     return render(request, 'resource_library/add_folder.html', {'form': form})
@@ -43,7 +43,7 @@ def resource_upload(request):
             # Redirect to the resource list for the selected folder.
             resource.user = request.user  # 👈 Link to logged-in user
             resource.save()
-            return redirect('resource_list', category_name=resource.category.name)
+            return redirect('resource_library:resource_list', category_name=resource.category.name)
     else:
         form = ResourceForm()
     return render(request, 'resource_library/upload_resource.html', {'form': form})
@@ -82,4 +82,4 @@ def resource_delete(request, resource_id):
     resource = get_object_or_404(Resource, id=resource_id, user=request.user)  # 👈 Check ownership
     category_name = resource.category.name if resource.category else "Uncategorized"
     resource.delete()
-    return redirect('resource_list', category_name=category_name)
+    return redirect('resource_library:resource_list', category_name=category_name)
