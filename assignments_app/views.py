@@ -239,15 +239,19 @@ def submit_assignment(request, assignment_id):
                     return render(request, 'assignments_app/error_asg.html', {'message': 'Cannot submit both text and file!'})
 
                 uploaded_file_urls = []
+                upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
+                os.makedirs(upload_dir, exist_ok=True)
                 for file in answer_files:
-                    file_path = os.path.join('uploads/', file.name)  # ✅ Ensure file is stored in MEDIA_ROOT/uploads/
-                    with open(os.path.join(settings.MEDIA_ROOT, file_path), 'wb+') as destination:
+                    safe_name=file.name.replace('#','_')
+                    file_path = os.path.join('uploads', safe_name)  
+                    full_path=os.path.join(settings.MEDIA_ROOT, file_path)
+                    with open(full_path, 'wb+') as destination:
                         for chunk in file.chunks():
                             destination.write(chunk)
-                uploaded_file_urls.append(file_path)
+                    uploaded_file_urls.append(file_path)
                 descriptive_answers[str(question.id)] = {
                     "text": answer_text if answer_text else None,
-                    "files": uploaded_file_urls if uploaded_file_urls else None  # ✅ Save actual file URLs
+                    "files": uploaded_file_urls if uploaded_file_urls else []  # ✅ Save actual file URLs
                 }
 
         # ✅ Save submission with correctly structured data
