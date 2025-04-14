@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'conference_meeting',
     'discussions',
     'helpbot',
+    'resource_library',
 
     'django_extensions',
     'rest_framework',
