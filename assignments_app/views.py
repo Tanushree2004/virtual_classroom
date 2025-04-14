@@ -325,8 +325,9 @@ def view_student_submission(request, submission_id):
                 mcq_score += 1
 
         else:
-            answer_data["descriptive_text"] = submission.descriptive_answers.get(f"question_{question.id}", {}).get("text", "")
-            answer_data["files"] = submission.descriptive_answers.get(str(question.id), {}).get("files", [])
+            descriptive_answer = submission.descriptive_answers.get(str(question.id),{})
+            answer_data["descriptive_text"] = descriptive_answer.get("text","")
+            answer_data["files"] = descriptive_answer.get("files",[])
 
         formatted_answers.append(answer_data)
 
