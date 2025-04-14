@@ -266,10 +266,10 @@
     <div class="right-section">
         <div class="assignment-container">
             <h3 class="section-title"><i class="bi bi-book"></i> Assignments</h3>
-            {% if assignments %}
+            {% if active_assignments %}
                 <ul class="search-results">
-                    {% for assignment in assignments %}
-                        <li>{{ assignment.title }} - Due: {{ assignment.due_date }}</li>
+                    {% for assignment in active_assignments %}
+                        <li>{{ assignment.name }} - Due: {{ assignment.deadline|date:"d M, Y H:i" }}</li>
                     {% endfor %}
                 </ul>
             {% else %}
@@ -300,5 +300,81 @@
             {% endif %}
         </div>       
     </div>
+    <style>
+        #helpbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #21548A;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            z-index: 1000;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          }
+          
+          /* Optional fade effect */
+          @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+          }
+          .fade-out {
+            animation: fadeOut 0.5s forwards;
+          }
+          
+    </style>
+    <div id="helpbot-icon">H</div>
+    <script>
+        const helpbotIcon = document.getElementById("helpbot-icon");
+      
+        helpbotIcon.addEventListener('mousedown', function(e) {
+          let shiftX = e.clientX - helpbotIcon.getBoundingClientRect().left;
+          let shiftY = e.clientY - helpbotIcon.getBoundingClientRect().top;
+      
+          function onMouseMove(e) {
+            let newLeft = e.clientX - shiftX;
+            let newTop = e.clientY - shiftY;
+            const iconWidth = helpbotIcon.offsetWidth;
+            const iconHeight = helpbotIcon.offsetHeight;
+            const maxLeft = window.innerWidth - iconWidth;
+            const maxTop = window.innerHeight - iconHeight;
+            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+            newTop = Math.max(0, Math.min(newTop, maxTop));
+      
+            helpbotIcon.style.bottom = "auto";
+            helpbotIcon.style.right = "auto";
+            helpbotIcon.style.left = newLeft + 'px';
+            helpbotIcon.style.top = newTop + 'px';
+          }
+      
+          document.addEventListener('mousemove', onMouseMove);
+      
+          document.addEventListener('mouseup', function onMouseUp() {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+          });
+        });
+      
+        helpbotIcon.ondragstart = function() {
+          return false;
+        };
+      
+        helpbotIcon.onclick = function() {
+          document.body.classList.add('fade-out');
+          setTimeout(() => {
+            window.location.href = '/helpbot/';
+          }, 500);
+        };
+      </script>
+      
+    
 </div>
 {% endblock %}
