@@ -131,7 +131,7 @@ MIDDLEWARE.append('virtual_classroom.middleware.TenantMiddleware')
 load_dotenv()
 GOOGLE_NEWS_API_KEY = os.getenv("GOOGLE_NEWS_API_KEY")
 
-'''CHANNEL_LAYERS = {
+CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
@@ -143,6 +143,6 @@ CHANNEL_LAYERS = {
             'hosts': [('redis://default:JdXDxNdIIpltyJhmKgJOYrMBSYpnbLTJ@redis.railway.internal:6379', 6379)],  # match Railway Redis service name
         },
     },
-}
+}'''
 
 CSP_CONNECT_SRC = ("'self'", "wss://127.0.0.1:8000")
