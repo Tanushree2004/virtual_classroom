@@ -58,6 +58,7 @@ class UserPreference(models.Model):
     theme = models.CharField(max_length=10, choices=THEME_CHOICES, default='system')
     font_size = models.CharField(max_length=10, choices=FONT_SIZE_CHOICES, default='medium')
     font_style = models.CharField(max_length=20, choices=FONT_STYLE_CHOICES, default='sans-serif')
+    helpbot_name = models.CharField(max_length=50, default="HelpBot")  # New field for the helpbot name
 
     def __str__(self):
         return f"{self.user.username}'s Preferences"
