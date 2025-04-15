@@ -176,8 +176,19 @@
             <div class="actions">
               <a href="{{ resource.file.url }}" target="_blank" class="view">View</a>
               <a href="{% url 'resource_library:resource_download' resource.id %}" class="download">Download</a>
-              <a href="{% url 'resource_library:resource_delete' resource.id %}" class="delete" onclick="return confirm('Are you sure you want to delete this resource?')">Delete</a>
+            
+              {% if user_role == "Instructor" %}
+                <!-- Instructor sees delete button -->
+                <a href="{% url 'resource_library:resource_delete' resource.id %}" class="delete" onclick="return confirm('Are you sure you want to delete this resource?')">Delete</a>
+              
+              {% elif user_role == "Student" and category.owner %}
+                <!-- Student's personal folder: can delete only their own uploaded resources -->
+                {% if resource.user == user %}
+                  <a href="{% url 'resource_library:resource_delete' resource.id %}" class="delete" onclick="return confirm('Are you sure you want to delete this resource?')">Delete</a>
+                {% endif %}
+              {% endif %}
             </div>
+            
           </div>
         {% empty %}
           <p>No resources available in this category yet.</p>
