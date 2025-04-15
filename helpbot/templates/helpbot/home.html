@@ -30,54 +30,70 @@
   </div>
   
   <script>
-    // Retrieve botName from localStorage or default "HelpBot"
-    var botName = localStorage.getItem('botName') || "HelpBot";
+    // Set the botName from the server-rendered template context.
+    var botName = "{{ bot_name }}";
 
-    // Update the header and greeting with the current botName
+    // Update the header and greeting with the current botName.
     document.getElementById('bot-title').textContent = botName;
     document.getElementById('default-greeting').textContent =
       botName + ": Hello! How can I help you today?";
 
-    // Rename button logic
+    // Function to update the greeting message.
     function updateGreeting() {
       var defaultGreeting = document.getElementById('default-greeting');
       defaultGreeting.textContent = botName + ": Hello! How can I help you today?";
     }
 
+    // Rename button logic with server-side update.
     document.getElementById('rename-btn').addEventListener('click', function() {
         var newName = prompt("Enter a new name for your helpbot:");
         if(newName) {
-            botName = newName;
-            localStorage.setItem('botName', botName);
-            document.getElementById('bot-title').textContent = botName;
-            updateGreeting();
+            // Send the new name to the server to update the user's preference.
+            fetch("{% url 'helpbot:update_helpbot_name' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: "new_name=" + encodeURIComponent(newName)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success'){
+                    botName = newName;
+                    document.getElementById('bot-title').textContent = botName;
+                    updateGreeting();
+                } else {
+                    alert("Failed to update helpbot name. Please try again.");
+                }
+            });
         }
     });
 
-    // Handle form submission
+    // Handle form submission for sending a question to the helpbot.
     document.getElementById('helpbot-form').addEventListener('submit', function(e) {
         e.preventDefault();
         var question = document.getElementById('question').value;
         var chatThread = document.getElementById('chat-thread');
 
-        // 1) Create a row for the user's message (right side)
+        // Create a row for the user's message.
         var userRow = document.createElement('div');
         userRow.classList.add('message-row', 'user-message');
 
-        // 2) Create a bubble for the user's text
+        // Create a bubble for the user's text.
         var userBubble = document.createElement('div');
         userBubble.classList.add('message-bubble', 'user-bubble');
         userBubble.textContent = "You: " + question;
 
-        // Append the bubble to the row, and the row to the thread
+        // Append the bubble to the row, and the row to the chat thread.
         userRow.appendChild(userBubble);
         chatThread.appendChild(userRow);
 
-        // Clear the input field
+        // Clear the input field.
         document.getElementById('question').value = "";
 
-        // Send the request to the server
-        fetch("{% url 'helpbot_ask' %}", {
+        // Send the question to the helpbot back-end.
+        fetch("{% url 'helpbot:helpbot_ask' %}", {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -85,22 +101,21 @@
           },
           body: "question=" + encodeURIComponent(question)
         })
-        
         .then(response => response.json())
         .then(data => {
-            // 3) Create a row for the bot message (left side)
+            // Create a row for the bot message.
             var botRow = document.createElement('div');
             botRow.classList.add('message-row', 'bot-message');
 
-            // 4) Create a bubble for the bot's text
+            // Create a bubble for the bot's text.
             var botBubble = document.createElement('div');
             botBubble.classList.add('message-bubble', 'bot-bubble');
 
-            // Create a span for the text
+            // Create a span for the response text.
             var botText = document.createElement('span');
             botText.textContent = botName + ": " + data.response;
 
-            // Create a speaker icon
+            // Create a speaker icon button for text-to-speech.
             var audioBtn = document.createElement('button');
             audioBtn.classList.add('speaker');
             audioBtn.innerHTML = "🔊";
@@ -109,30 +124,33 @@
                 window.speechSynthesis.speak(utterance);
             });
 
-            // Append text and icon to the bot bubble
+            // Append the response text and speaker icon to the bot bubble.
             botBubble.appendChild(botText);
             botBubble.appendChild(audioBtn);
 
-            // Append the bot bubble to the bot row
+            // Append the bot bubble to the bot row.
             botRow.appendChild(botBubble);
 
-            // Finally, append the bot row to the chat thread
+            // Append the bot row to the chat thread.
             chatThread.appendChild(botRow);
 
-            // Scroll to bottom
+            // Scroll to the bottom of the chat thread.
             chatThread.scrollTop = chatThread.scrollHeight;
         });
     });
+
+    // Helpbot icon click returns to the previous page with a fade-out effect.
     document.getElementById('helpbot-icon').onclick = function() {
-    document.body.classList.add('fade-out');
-    setTimeout(() => {
-      window.history.back();
-    }, 500);  // matches animation duration
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+          // Redirect to the dashboard page (change the URL if needed)
+          window.location.href = '/dashboard/dashboard/';
+      }, 500);
   };
 
-  // Ensure fade-in on page load
+  // Ensure fade-in on page load.
   window.onload = function() {
-    document.body.classList.add('fade-in');
+      document.body.classList.add('fade-in');
   };
   </script>
 </body>
