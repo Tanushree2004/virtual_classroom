@@ -12,7 +12,7 @@ def upload_3d_model(request):
         form = ThreeDModelForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect("model_list")  # Redirect to the model list page
+            return redirect("threeDmodels:model_list")  # Redirect to the model list page
     else:
         form = ThreeDModelForm()
 
@@ -27,5 +27,5 @@ def model_list(request):
 def delete_model(request, model_id):
     model = get_object_or_404(ThreeDModel, id=model_id)
     model.delete()
-    return redirect('model_list')
+    return redirect('threeDmodels:model_list')
         
