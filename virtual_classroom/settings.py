@@ -4,7 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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"
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 SECRET_KEY = 'django-insecure-pj!^xdk8d7!8#29hz@i&l$zu2itim9g6u(@c+_emmj!s3me2pa'
 DEBUG = True
