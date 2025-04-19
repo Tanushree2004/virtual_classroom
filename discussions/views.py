@@ -11,6 +11,8 @@ from django.db.models import Q
 from django.http import HttpResponseForbidden
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
+from .models import Vote
+
 @login_required
 def discussion_list(request):
     main_categories = Category.objects.filter(parent__isnull=True)
@@ -95,30 +97,45 @@ def discussion_detail(request, pk):
 @require_POST
 def vote_discussion(request, pk):
     discussion = get_object_or_404(Discussion, pk=pk)
-    
-    # Check if the request is AJAX
+
     if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
-    
+
     try:
         data = json.loads(request.body)
-        vote_type = data.get('vote_type')
+        vote_type = data.get('vote_type')  # 'upvote' or 'downvote'
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON.'}, status=400)
 
-    if vote_type == 'upvote':
-        discussion.upvotes += 1
-    elif vote_type == 'downvote':
-        discussion.downvotes += 1
-    else:
+    if vote_type not in ['upvote', 'downvote']:
         return JsonResponse({'success': False, 'error': 'Invalid vote type.'}, status=400)
 
+    user = request.user
+    existing_vote = Vote.objects.filter(user=user, discussion=discussion).first()
+
+    # Remove previous vote
+    if existing_vote:
+        if existing_vote.vote_type == vote_type:
+            existing_vote.delete()
+        else:
+            existing_vote.vote_type = vote_type
+            existing_vote.save()
+    else:
+        Vote.objects.create(user=user, discussion=discussion, vote_type=vote_type)
+
+    # Recalculate vote counts
+    upvotes = Vote.objects.filter(discussion=discussion, vote_type='upvote').count()
+    downvotes = Vote.objects.filter(discussion=discussion, vote_type='downvote').count()
+
+    discussion.upvotes = upvotes
+    discussion.downvotes = downvotes
     discussion.save()
+
     return JsonResponse({
-        'success': True, 
+        'success': True,
         'vote_score': discussion.vote_score,
-        'upvotes': discussion.upvotes,
-        'downvotes': discussion.downvotes
+        'upvotes': upvotes,
+        'downvotes': downvotes
     })
 @login_required
 @require_POST
