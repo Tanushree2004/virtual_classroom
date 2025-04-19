@@ -59,3 +59,16 @@ class Comment(models.Model):
     @property
     def is_reply(self):
         return self.parent is not None
+
+class Vote(models.Model):
+    VOTE_CHOICES = (
+        ('upvote', 'Upvote'),
+        ('downvote', 'Downvote'),
+    )
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    discussion = models.ForeignKey(Discussion, on_delete=models.CASCADE, related_name='votes')
+    vote_type = models.CharField(max_length=10, choices=VOTE_CHOICES)
+    voted_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'discussion')
