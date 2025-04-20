@@ -435,11 +435,12 @@
                 <hr>
                 
                 <h3>CATEGORIES</h3>
-                <ul>
+                <ul id="category-list">
                     {% for category in main_categories %}
                         <li><a href="{% url 'discussions:category_discussions' category.slug %}">{{ category.name }}</a></li>
                     {% endfor %}
                 </ul>
+                
                 <div id="add-category-container">
                     <button id="add-category-btn" class="new-discussion-btn" style="margin-top: 10px;">Add New Category</button>
                     <input type="text" id="new-category-input" placeholder="Enter category name" style="display: none; margin-top: 10px; width: 100%; padding: 5px;">
@@ -448,7 +449,15 @@
                 <hr>
                 
                 <div>
-                    <a href="{% url 'discussions:create_discussion' %}" class="new-discussion-btn">Start new Discussion</a>
+                    {% if can_post %}
+                        <a href="{% url 'discussions:create_discussion' %}" class="new-discussion-btn">Start new Discussion</a>
+                    {% elif is_announcement %}
+                        <p style="margin-top: 15px; font-weight: bold; color: blue;">
+                            Only instructors can start discussions in the 'Announcements' category.
+                        </p>
+                    {% else %}
+                        <a href="{% url 'discussions:create_discussion' %}" class="new-discussion-btn">Start new Discussion</a>
+                    {% endif %}
                 </div>
             {% endblock %}
         </aside>
@@ -462,46 +471,50 @@
         <p>© {% now "Y" %} LMS Discussion Forum</p>
     </footer-->
 
-    <script>
-         
-        // Menu toggle functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuBtn = document.getElementById('menuBtn');
-            const dropdownMenu = document.getElementById('dropdownMenu');
-            
-            menuBtn.addEventListener('click', function(e) {
+    <!-- Add this just before </body> at the bottom of base.html -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuBtn = document.getElementById('menuBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+    
+        if (menuBtn && dropdownMenu) {
+            menuBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
                 dropdownMenu.classList.toggle('show');
             });
-            
-            document.addEventListener('click', function() {
+    
+            document.addEventListener('click', function () {
                 dropdownMenu.classList.remove('show');
             });
-            
-            dropdownMenu.addEventListener('click', function(e) {
+    
+            dropdownMenu.addEventListener('click', function (e) {
                 e.stopPropagation();
             });
-            const addCategoryBtn = document.getElementById('add-category-btn');
-            const newCategoryInput = document.getElementById('new-category-input');
-            
-            addCategoryBtn.addEventListener('click', function() {
-                // Toggle the display of the input field
-                if (newCategoryInput.style.display === 'none') {
+        }
+    
+        const addCategoryBtn = document.getElementById('add-category-btn');
+        const newCategoryInput = document.getElementById('new-category-input');
+    
+        if (addCategoryBtn && newCategoryInput) {
+            addCategoryBtn.addEventListener('click', function () {
+                if (newCategoryInput.style.display === 'none' || newCategoryInput.style.display === '') {
                     newCategoryInput.style.display = 'block';
                     newCategoryInput.focus();
                 } else {
                     newCategoryInput.style.display = 'none';
                 }
             });
-            newCategoryInput.addEventListener('keypress', function(e) {
+    
+            newCategoryInput.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const categoryName = newCategoryInput.value.trim();
                     if (categoryName === '') return;
-                    
+    
                     const formData = new FormData();
                     formData.append('category_name', categoryName);
-                    
+    
                     fetch("{% url 'discussions:add_category' %}", {
                         method: 'POST',
                         body: formData,
@@ -513,17 +526,16 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-   // Append the new category to the sidebar list immediately
-   const categoryList = document.getElementById('category-list');
+                            // Add to sidebar
+                            const categoryList = document.getElementById('category-list');
                             const li = document.createElement('li');
                             const a = document.createElement('a');
                             a.href = "/category/" + data.slug + "/";
                             a.textContent = data.name;
                             li.appendChild(a);
                             categoryList.appendChild(li);
-                            
-                            
-                            // Also update the category dropdown in the discussion form if it exists
+    
+                            // Add to discussion form dropdown
                             const categorySelect = document.getElementById('id_category');
                             if (categorySelect) {
                                 const option = document.createElement('option');
@@ -531,11 +543,11 @@
                                 option.text = data.name;
                                 categorySelect.appendChild(option);
                             }
-                            
+    
                             newCategoryInput.value = '';
                             newCategoryInput.style.display = 'none';
                         } else {
-                            alert(data.error);
+                            alert(data.error || "Error adding category.");
                         }
                     })
                     .catch(error => {
@@ -543,24 +555,24 @@
                     });
                 }
             });
-            
-            // Function to get CSRF token from cookies
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
+        }
+    
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
                 }
-                return cookieValue;
             }
-        });
-        
+            return cookieValue;
+        }
+    });
     </script>
+    
 </body>
 </html>
