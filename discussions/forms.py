@@ -2,18 +2,38 @@
 from django import forms
 from .models import Discussion, Comment, Category
 
+from django import forms
+from .models import Discussion, Comment, Category
+
 class DiscussionForm(forms.ModelForm):
-    
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # get the user
+        super().__init__(*args, **kwargs)
+
+        # Filter categories if user is not instructor
+        qs = Category.objects.all()
+        if user and user.role != 'Instructor':
+            qs = qs.exclude(slug='announcements')
+
+        self.fields['category'].queryset = qs
+        self.fields['category'].empty_label = "Select Category"
+
+        # Optional: add visual hint
+        for cat in qs:
+            label = f"{cat.name} (Instructors only)" if cat.slug == "announcements" else cat.name
+            self.fields['category'].choices = [(c.id, c.name) for c in qs]
+
     category = forms.ModelChoiceField(
-        queryset=Category.objects.all(),
+        queryset=Category.objects.none(),  # Will be replaced in __init__
         required=False,
-        empty_label="Select Category"
     )
 
     class Meta:
         model = Discussion
         fields = ['title', 'content', 'category']
         exclude = ['author', 'created_at', 'upvotes', 'downvotes']
+
 
 class CommentForm(forms.ModelForm):
     '''author_name = forms.CharField(
