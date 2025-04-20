@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/dashboard_style.css' %}">
+
+<div class="assignments-container">
+    <h2 class="heading">Exam Dashboard</h2>
+    <div class="assignment-list">
+        {% if exams %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Exam Name</th>
+                    <th>Instructor</th>
+                    <th>Date of Examination</th>
+                    <th>Starting time</th>
+                    <th>Ending Time</th>
+                    <th>Submit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr class="{% if exam.deadline < now %}late{% else %}on-time{% endif %}">
+                    <td>
+                        <a href="{% url 'exam:submission_details' exam.id %}"
+                            style="color: #37e172;text-decoration: none;">
+                            {{ exam.name }}
+                        </a>
+                    </td>
+                    <td>{{ exam.instructor.username }}</td>
+                    <td>{{ exam.deadline }}</td>
+                    <td>{{ exam.start_duration }}</td>
+                    <td>{{ exam.end_duration }}</td>
+                    <td>
+                        {% if exam.id in submitted_ids %}
+                        <button disabled>Already Submitted</button>
+                        {% elif exam.deadline < now %} <button disabled>Deadline Passed</button>
+                            {% else %}
+                            <a href="{% url 'exam:submit_exam' exam.id %}" target="_blank"
+                                rel="noopener noreferrer">Start Exam</a>
+                            {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-assignments">No exams available.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

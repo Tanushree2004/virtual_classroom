@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load file_filters_exam %}
+
+{% block content %}
+<div class="view_student_submission">
+    <link rel="stylesheet" href="{% static 'css/view_student_submission.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<h2>Submission for {{ submission.student.username }}</h2>
+
+<h3>MCQ Score: {{ mcq_score }} / {{ total_mcq }}</h3>
+
+<h3>Answers:</h3>
+{% for answer in formatted_answers %}
+<p><strong>Q{{ answer.index }}: {{ answer.question_text }}</strong></p>
+
+{% if answer.attachments %}
+    <div class="question-attachment">
+        {% if answer.attachments %}
+        <img src="{{ answer.attachments.url }}" alt="Attachment"
+            style="max-width:100%; height:auto; border:1px solid #ccc; margin:10px 0;">
+        {% else %}
+        <p><a href="{{ answer.attachments.url }}" download>Download Attachment</a></p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+{% if answer.is_mcq %}
+<p><strong>Selected:</strong>
+    {% if answer.selected_options %}
+    {{ answer.selected_options|join:", " }}
+    {% else %}
+    <span style="color: red;">No option selected</span>
+    {% endif %}
+</p>
+
+<p><strong>Correct Answer:</strong>
+    {% if answer.correct_options %}
+    {{ answer.correct_options|join:", " }}
+    {% else %}
+    <span style="color: gray;">No correct answer set</span>
+    {% endif %}
+</p>
+
+{% if answer.is_correct %}
+<p style="color: green;"><strong>✔ Correct</strong></p>
+{% else %}
+<p style="color: red;"><strong>✖ Incorrect</strong></p>
+{% endif %}
+
+{% else %}
+<p><strong>Student's Answer:</strong></p>
+
+<!-- Show the written answer if available -->
+{% if answer.descriptive_text %}
+<p>{{ answer.descriptive_text }}</p>
+{% else %}
+<p style="color: gray;">No written answer provided</p>
+{% endif %}
+<p><strong>Uploaded Files:</strong></p>
+<ul>
+    {% for file in answer.files %}
+    <li>
+        <i class="{{ file|lower|slice:'-3:'|file_icon }}"></i> <!-- Auto Icon -->
+        <a href="{% get_media_prefix %}{{ file }}" download>{{ file|basename }}</a>
+    </li>
+    {% empty %}
+    <p style="color: gray;">No file uploaded</p>
+    {% endfor %}
+</ul>
+
+{% endif %}
+<hr>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="submit-exam">
+    <link rel="stylesheet" href="{% static 'css/submit_exam.css' %}">
+    <h2>Submit Exam: {{ exam.name }}</h2>
+
+    {% if exam_end %}
+
+    <center>
+        <h3 style="color: gray;">Exam is over.</h3>
+    </center>
+
+    {% elif exam_started %}
+
+    <div id="fullscreen-prompt">
+        <center>
+            <h2>Click the button below to start your exam in secure mode.</h2>
+            <button id="enter-fullscreen-btn">Enter Fullscreen and Start</button>
+        </center>
+    </div>
+    <div id="exam-container" style="display: none;">
+        <div id="timer" style="font-size: 24px; font-weight: bold; color: crimson; margin-bottom: 20px;">
+            ⏳ Time Remaining: <span id="countdown">Loading...</span>
+        </div>
+
+        <div class="assignment-details">
+            <p><strong>Instructor:</strong> {{ exam.instructor.username }}</p>
+            <p><strong>Date of Examination:</strong> {{ exam.deadline }}</p>
+            <p><strong>Description:</strong> {{ exam.description }}</p>
+        </div>
+
+        <form id="exam_form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div class="question">
+                <p><strong>Q{{ forloop.counter }}: {{ question.text }}</strong></p>
+
+                {% if question.question_attachment %}
+                <div class="question-attachment">
+                    <img src="{{ question.question_attachment.url }}" alt="Attachment"
+                        style="max-width:100%; height:auto; border:1px solid #ccc; margin:10px 0;">
+                </div>
+                {% endif %}
+
+                {% if question.is_mcq %}
+                {% for option in question.examoptions.all %}
+                <label>
+                    <input type="checkbox" name="question_{{ question.id }}" value="{{ option.id }}">
+                    {{ option.text }}
+                </label><br>
+                {% endfor %}
+                {% else %}
+                <textarea name="question_{{ question.id }}_text" placeholder="Write your answer..."></textarea>
+                <!--input type="file" name="question_{{ question.id }}_files" accept="image/*" capture="environment" multiple-->
+                <div class="camera-upload" data-question-id="{{ question.id }}">
+                    <!--textarea name="question_{{ question.id }}_text" placeholder="Write your answer..."></textarea-->
+
+                    <video autoplay playsinline style="display: none; width: 300px; height: auto;"></video>
+                    <canvas style="display: none;"></canvas>
+
+                    <!--div class="image-preview" style="display: none; margin-top: 10px;">
+                <img style="max-width: 300px; height: auto; border: 1px solid #ccc;" />
+                <br>
+                <label>Image Name:</label>
+                <input type="text" class="image-name-input" placeholder="Enter file name" style="margin-top: 5px;" />
+            </div-->
+
+                    <div class="camera-buttons">
+                        <button type="button" class="open-camera-btn">Open Camera</button>
+                        <button type="button" class="capture-btn" style="display:none;">Capture</button>
+                        <!--button type="button" class="retake-btn" style="display:none;">Retake</button-->
+                    </div>
+                    <div class="image-container"></div>
+                    <p class="camera-msg" style="color: gray;"></p>
+                </div>
+
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit">Submit Exam</button>
+        </form>
+
+    </div>
+    <script id="duration-data" type="application/json">
+    {{ duration_seconds }}
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            //Timer logic
+            const duration = JSON.parse(document.getElementById("duration-data").textContent);
+            let timeLeft = duration;
+            const countdownEl = document.getElementById("countdown");
+            const form = document.getElementById("exam_form");
+            let submitted = false;
+            function updateCountdown() {
+                const hours = Math.floor(timeLeft / 3600);
+                const minutes = Math.floor((timeLeft % 3600) / 60);
+                const seconds = timeLeft % 60;
+
+                countdownEl.textContent = `${hours.toString().padStart(2, '0')}:` +
+                    `${minutes.toString().padStart(2, '0')}:` +
+                    `${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    countdownEl.textContent = "00:00:00";
+                    //alert("Times Up!!");
+                    submitted = true;
+                    //Array.from(form.elements).forEach(el=>el.disabled=true);
+                    form.submit();
+                }
+                timeLeft--;
+            }
+            updateCountdown();
+            const timer = setInterval(updateCountdown, 1000);
+
+            //Camera logic
+            const cameraBlocks = document.querySelectorAll(".camera-upload");
+
+            cameraBlocks.forEach(block => {
+                const openBtn = block.querySelector(".open-camera-btn");
+                const captureBtn = block.querySelector(".capture-btn");
+                const video = block.querySelector("video");
+                const canvas = block.querySelector("canvas");
+                const msg = block.querySelector(".camera-msg");
+                const imageContainer = block.querySelector(".image-container");
+                const questionId = block.getAttribute("data-question-id");
+
+                let stream = null;
+
+                openBtn.addEventListener("click", async () => {
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        msg.textContent = "Camera not supported on your device.";
+                        return;
+                    }
+
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        video.srcObject = stream;
+                        video.style.display = "block";
+                        captureBtn.style.display = "inline-block";
+                        openBtn.style.display = "none";
+                        msg.textContent = "";
+                    } catch (err) {
+                        msg.textContent = "Failed to access camera.";
+                    }
+                });
+
+                captureBtn.addEventListener("click", () => {
+                    const context = canvas.getContext("2d");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0);
+
+                    // Stop camera
+                    stream.getTracks().forEach(track => track.stop());
+                    video.style.display = "none";
+                    captureBtn.style.display = "none";
+                    openBtn.style.display = "inline-block";
+
+                    // Convert to Blob
+                    canvas.toBlob(blob => {
+                        const imageWrapper = document.createElement("div");
+                        imageWrapper.style.border = "1px solid #ccc";
+                        imageWrapper.style.padding = "10px";
+                        imageWrapper.style.marginTop = "10px";
+                        imageWrapper.style.display = "inline-block";
+                        imageWrapper.style.position = "relative";
+
+                        const img = document.createElement("img");
+                        img.src = URL.createObjectURL(blob);
+                        img.style.maxWidth = "300px";
+                        img.style.height = "auto";
+
+                        const nameLabel = document.createElement("label");
+                        nameLabel.textContent = "Image Name:";
+
+                        const nameInput = document.createElement("input");
+                        nameInput.type = "text";
+                        nameInput.placeholder = "Enter file name";
+                        nameInput.style.marginTop = "5px";
+                        nameInput.style.display = "block";
+
+                        const hiddenInput = document.createElement("input");
+                        hiddenInput.type = "file";
+                        hiddenInput.name = `question_${questionId}_files`;
+                        hiddenInput.style.display = "none";
+
+                        const dataTransfer = new DataTransfer();
+                        const fileName = `captured_${Date.now()}.png`;
+                        const file = new File([blob], fileName, { type: "image/png" });
+                        dataTransfer.items.add(file);
+                        hiddenInput.files = dataTransfer.files;
+
+                        // Rename support
+                        nameInput.addEventListener("input", () => {
+                            const customName = nameInput.value.trim();
+                            if (customName) {
+                                const newFile = new File([blob], `${customName}.png`, { type: "image/png" });
+                                const newTransfer = new DataTransfer();
+                                newTransfer.items.add(newFile);
+                                hiddenInput.files = newTransfer.files;
+                            }
+                        });
+
+                        // Delete button
+                        const deleteBtn = document.createElement("button");
+                        deleteBtn.type = "button";
+                        deleteBtn.textContent = "Delete";
+                        deleteBtn.style.marginTop = "5px";
+                        deleteBtn.addEventListener("click", () => {
+                            imageWrapper.remove();
+                        });
+
+                        // Retake button
+                        const retakeBtn = document.createElement("button");
+                        retakeBtn.type = "button";
+                        retakeBtn.textContent = "Retake";
+                        retakeBtn.style.marginTop = "5px";
+                        retakeBtn.style.marginLeft = "5px";
+                        retakeBtn.addEventListener("click", () => {
+                            imageWrapper.remove();
+                            openBtn.click(); // Reopen camera
+                        });
+
+                        imageWrapper.appendChild(img);
+                        imageWrapper.appendChild(document.createElement("br"));
+                        imageWrapper.appendChild(nameLabel);
+                        imageWrapper.appendChild(nameInput);
+                        imageWrapper.appendChild(hiddenInput);
+                        imageWrapper.appendChild(deleteBtn);
+                        imageWrapper.appendChild(retakeBtn);
+
+                        imageContainer.appendChild(imageWrapper);
+                        msg.textContent = "Image captured. You can rename, retake or delete.";
+                    }, "image/png");
+                });
+            });
+        });
+    </script>
+    <script src="{% static 'js/exam_secure.js' %}"></script>
+    {% else %}
+    <center>
+        <h3 style="color: gray;">Exam has not started yet.</h3>
+    </center>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+/* Main container */
+.submit-exam {
+    padding: 30px;
+    background-color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    color: #2C3E50;
+    max-height: 800px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.submit-exam h2 {
+    color: #2C3E50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+/* Fullscreen prompt */
+.submit-exam #fullscreen-prompt {
+    background-color: #f9f9f9;
+    border: 1px dashed #ccc;
+    padding: 30px;
+    border-radius: 10px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.submit-exam #fullscreen-prompt button {
+    padding: 12px 25px;
+    background-color: #2C3E50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.submit-exam #fullscreen-prompt button:hover {
+    background-color: #1a252f;
+}
+
+/* Timer display */
+.submit-exam #timer {
+    background-color: #fff;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-align: center;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Assignment details */
+.submit-exam .assignment-details {
+    background-color: #f2f2f2;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    color: #555;
+}
+
+/* Question block */
+.submit-exam .question {
+    background-color: #f9f9f9;
+    border-left: 5px solid #2C3E50;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.submit-exam .question p {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.submit-exam .question label {
+    display: block;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Question image attachment */
+.submit-exam .question-attachment img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    border-radius: 6px;
+}
+
+/* Textarea */
+.submit-exam textarea {
+    width: 100%;
+    height: 100px;
+    resize: vertical;
+    padding: 10px 15px;
+    margin-top: 8px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Camera upload section */
+.submit-exam .camera-upload {
+    margin-top: 15px;
+}
+
+.submit-exam .camera-upload video {
+    width: 300px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.submit-exam .camera-upload .camera-buttons {
+    margin-top: 10px;
+}
+
+.submit-exam .camera-upload .camera-buttons button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    background-color: #2C3E50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.submit-exam .camera-upload .camera-buttons button:hover {
+    background-color: #1a252f;
+}
+
+.submit-exam .camera-upload .image-container {
+    margin-top: 15px;
+}
+
+.submit-exam .camera-upload .image-container img {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Camera message */
+.submit-exam .camera-upload .camera-msg {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Submit button */
+.submit-exam button[type="submit"] {
+    background-color: #4CAF50;
+    padding: 12px 24px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.submit-exam button[type="submit"]:hover {
+    background-color: #3e9142;
+}

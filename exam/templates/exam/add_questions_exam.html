@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="add-question-page">
+    <link rel="stylesheet" href="{% static 'css/add_questions.css' %}">
+    <h2>Add Questions for Exam</h2>
+
+    <form id="question-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Question:</label>
+        <input type="text" name="question_text" required value="{{ editing_question.text|default_if_none:'' }}">
+
+        <label>Type:</label>
+        <select name="question_type" id="question_type">
+            <option value="Descriptive" {% if editing_question and not editing_question.is_mcq %}selected{% endif %}>
+                Descriptive</option>
+            <option value="MCQ" {% if editing_question and editing_question.is_mcq %}selected{% endif %}>MCQ</option>
+        </select>
+
+        <label>Upload an image (Optional):</label>
+        <input type="file" name="question_attachment" class="file-input" id="question_attachment" accept="image/*"
+            multiple>
+        <ul id="preview-list"></ul>
+        {% if editing_question and editing_question.question_attachment %}
+        <div id="existing-attachment">
+            <p>Current Attachment:</p>
+            <img src="{{ editing_question.question_attachment.url }}" alt="Attachment"
+                style="max-width: 100px; max-height: 100px;">
+            <button type="button" onclick="removeExistingAttachment()" style="color: red;">❌ Remove</button>
+            <input type="hidden" name="remove_attachment" id="remove_attachment" value="0">
+        </div>
+        {% endif %}
+
+        <div id="mcq-options" style="display: none;">
+            <h3>MCQ Options</h3>
+            <div id="options-container">
+                {% if editing_question and editing_question.is_mcq %}
+                {% for option in existing_options %}
+                <div>
+                    <input type="text" name="options[]" value="{{ option.text }}" required
+                        oninput="this.nextElementSibling.value=this.value">
+                    <label>Correct:</label>
+                    <input type="checkbox" name="correct_options[]" value="{{ option.text }}" {% if option.is_correct %}checked{% endif %}>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <button type="button" id="add-option">+ Add Option</button>
+        </div>
+
+        <button type="submit">{% if editing_question %}Save Changes{% else %}Add Question{% endif %}</button>
+    </form>
+
+    <h3>Existing Questions</h3>
+    <ul>
+        {% for question in questions %}
+        <li>
+            {{ question.text }}
+            {% if question.is_mcq %}
+            MCQ
+            <ul>
+                {% for option in question.mcqoptions_set.all %}
+                <li>
+                    {{ option.text }} {% if option.is_correct %}✅ Correct{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            Descriptive
+            {% endif %}
+            <a href="{% url 'exam:edit_question_exam' question.id %}">✏ Edit</a>
+            <a href="{% url 'exam:delete_question_exam' question.id %}" onclick="return confirm('Are you sure?');">🗑 Delete</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Finish Button -->
+    <form method="POST" action="{% url 'exam:finalize_exam' exam.id %}">
+        {% csrf_token %}
+        <!--input type="hidden" name="save_assignment" value="1"-->
+        <button type="submit">Finish & Save Exam</button>
+    </form>
+
+    <script>
+        document.getElementById('question_type').addEventListener('change', function () {
+            document.getElementById('mcq-options').style.display = (this.value === 'MCQ') ? 'block' : 'none';
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeSelect = document.getElementById('question_type');
+            if (typeSelect.value === 'MCQ') {
+                document.getElementById('mcq-options').style.display = 'block';
+            }
+        });
+        document.getElementById('add-option').addEventListener('click', function () {
+            let container = document.getElementById('options-container');
+            let optionIndex = container.children.length;
+            let div = document.createElement('div');
+            div.innerHTML = `
+        <input type="text" name="options[]" placeholder="Option ${optionIndex + 1}" required
+        oninput="this.nextElementSibling.value=this.value">
+        <label>Correct:</label>
+        <input type="checkbox" name="correct_options[]" value="" onclick="this.value=this.previousElementSibling.value">
+    `;
+            container.appendChild(div);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.getElementById('question_type').value === 'MCQ') {
+                document.getElementById('mcq-options').style.display = 'block';
+            }
+            const fileInputs = document.querySelectorAll('.file-input');
+
+            fileInputs.forEach(input => {
+                const questionId = input.dataset.questionId;
+                const previewList = document.getElementById(`preview-list`);
+                let fileList = [];
+
+                input.addEventListener('change', function (e) {
+                    fileList = Array.from(e.target.files);
+                    updatePreview();
+                });
+
+                function updatePreview() {
+                    previewList.innerHTML = '';
+                    fileList.forEach((file, index) => {
+                        const li = document.createElement('li');
+                        li.style.marginBottom = '10px';
+
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = file.name;
+                        img.style.maxWidth = '100px';
+                        img.style.maxHeight = '100px';
+                        img.style.display = 'block';
+                        img.style.marginBottom = '5px';
+
+                        const fileName = document.createElement('span');
+                        fileName.textContent = file.name + ' ';
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.textContent = '❌';
+                        removeBtn.style.color = 'red';
+                        removeBtn.style.marginLeft = '10px';
+                        removeBtn.onclick = function () {
+                            fileList.splice(index, 1);
+                            updatePreview();
+                        };
+
+                        li.appendChild(img);
+                        li.appendChild(fileName);
+                        li.appendChild(removeBtn);
+                        previewList.appendChild(li);
+                    });
+
+                    const dt = new DataTransfer();
+                    fileList.forEach(file => dt.items.add(file));
+                    input.files = dt.files;
+                }
+
+            });
+        });
+    </script>
+    <script>
+        function removeExistingAttachment() {
+            const existing = document.getElementById('existing-attachment');
+            if (existing) existing.remove();
+            document.getElementById('remove_attachment').value = "1";
+        }
+    </script>
+</div>
+{% endblock %}

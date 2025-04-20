@@ -1,0 +1,178 @@
+.add-question-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #ffffff;
+    margin: 0;
+    padding: 2rem;
+    color: #333;
+    max-height: 610px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.add-question-page::-webkit-scrollbar {
+    display: none;
+}
+
+.add-question-page form {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.add-question-page h2,
+.add-question-page h3 {
+    text-align: center;
+    color: #0056b3;
+}
+
+/* Labels and Inputs */
+.add-question-page label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+}
+
+.add-question-page input[type="text"],
+.add-question-page select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.add-question-page input[type="text"]:focus,
+.add-question-page select:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+.add-question-page input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: #fdfdfd;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.add-question-page input[type="file"]:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+
+/* Buttons */
+.add-question-page button {
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-question-page button:hover {
+    background-color: #004090;
+}
+
+/* MCQ Options Styling */
+.add-question-page #mcq-options {
+    background-color: #f9f9f9;
+    border-left: 5px solid #0056b3;
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+}
+
+.add-question-page #options-container > div {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.add-question-page #options-container input[type="text"] {
+    flex: 1;
+}
+
+.add-question-page #options-container label {
+    margin: 0;
+}
+
+/* Existing Questions List */
+.add-question-page ul {
+    list-style-type: none;
+    padding-left: 0;
+    max-width: 800px;
+    margin: auto;
+}
+
+.add-question-page ul > li {
+    background: #ffffff;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-left: 5px solid #0056b3;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.add-question-page ul ul {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+}
+
+.add-question-page ul ul li {
+    background: #f4faff;
+    border-left: none;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.25rem;
+}
+
+/* Edit and Delete Links */
+.add-question-page a {
+    text-decoration: none;
+    margin-left: 1rem;
+    color: #0077cc;
+    font-weight: bold;
+}
+
+.add-question-page a:hover {
+    color: #004c99;
+    text-decoration: underline;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .add-question-page {
+        padding: 1rem;
+    }
+
+    .add-question-page form,
+    .add-question-page ul {
+        padding: 1rem;
+    }
+
+    .add-question-page #options-container > div {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

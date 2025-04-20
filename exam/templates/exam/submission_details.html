@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load json_extras %}
+{% block content %}
+<div class="details">
+    <link rel="stylesheet" href="{% static 'css/submission_details.css' %}">
+    <h2>{{ exam.name }} - Your Submission</h2>
+    <p><strong>Submitted At:</strong> {{ submission.submitted_at }}</p>
+    <hr>
+
+    {% for question in questions %}
+    <div class="question-block">
+        <h4>Q{{ forloop.counter }}. {{ question.text }}</h4>
+
+        {% if question.question_attachment %}
+        <div style="margin-top: 10px;">
+            <img src="{{ question.question_attachment.url }}" alt="Attachment"
+                style="max-width: 100%; max-height: 400px; border: 1px solid #ccc; padding: 5px;">
+        </div>
+        {% endif %}
+
+
+        {% if question.is_mcq %}
+        {% with key=question.id|stringformat:"s" %}
+        {% with answer=submission.mcq_answers|get_item:key %}
+        {% if answer %}
+        {% if answer|length > 1 %}
+        <p><strong>Selected Options:</strong></p>
+        {% else %}
+        <p><strong>Selected Option:</strong></p>
+        {% endif %}
+        <ul>
+            {% for opt_id in answer %}
+            {% for opt in question.options.all %}
+            {% if opt.id|stringformat:"s" == opt_id|stringformat:"s" %}
+            <li>{{ opt.text }}
+                {% if opt.is_correct %}
+                <span style="color: green;">(Correct)</span>
+                {% else %}
+                <span style="color: red;">(Incorrect)</span>
+                {% endif %}
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </ul>
+        <p><strong>Correct Answer:</strong>
+            {% for correct_opt in question.options.all %}
+            {% if correct_opt.is_correct %}
+            <span style="color: green;">{{ correct_opt.text }}</span>
+            {% endif %}
+            {% endfor %}
+        </p>
+        {% else %}
+        <p><em>No answer provided.</em></p>
+        {% endif %}
+        {% endwith %}
+        {% endwith %}
+        {% else %}
+        {% with key=question.id|stringformat:"s" %}
+        {% with answer=submission.descriptive_answers|get_item:key %}
+        {% if answer %}
+        {% if answer.text %}
+        <p><strong>Answer:</strong> {{ answer.text }}</p>
+        {% endif %}
+        {% if answer.files %}
+        <p><strong>Attached File(s):</strong></p>
+        <ul>
+            {% for file in answer.files %}
+            <li>
+                <a href="/media/{{ file }}" target="_blank" rel="noopener noreferrer"
+                    style="display: inline-block; text-decoration: none; margin-bottom: 5px;">
+                    {{ file }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+
+
+        {% else %}
+        <p><em>No answer provided.</em></p>
+        {% endif %}
+        {% endwith %}
+        {% endwith %}
+        {% endif %}
+    </div>
+    <hr>
+    {% endfor %}
+
+    {% if submission.uploaded_files %}
+    <h4>General Uploaded File:</h4>
+    <a href="{{ submission.uploaded_files.url }}" target="_blank">View File</a>
+    {% endif %}
+
+    <br><a href="{% url 'exam:student_dashboard_exam' %}" class="btn">Back to Dashboard</a>
+</div>
+{% endblock %}

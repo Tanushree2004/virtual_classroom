@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Exam{% endblock %}
+
+{% block content %}
+<div class="exam-create">
+<link rel="stylesheet" type="text/css" href="{% static 'css/create_exam_style.css' %}">
+
+<div class="assignment-form-container">
+    <h2 class="heading">Create New Exam</h2>
+
+    {% if user.role == "Instructor" %}
+    <form method="POST" action="{% url 'exam:create_exam' %}">
+        {% csrf_token %}
+
+        <label for="title">Exam Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <!--label for="class_group">Class Group:</label>
+        <input type="text" id="group" name="group" required-->
+        <label for="class_group">Class Group:</label>
+        <select id="group" name="group" required>
+            <option value="" disabled selected>-- Select a Classroom --</option>
+            {% for classroom in classrooms %}
+            <option value="{{ classroom.title }}">{{ classroom.title }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="deadline">Date of examination:</label>
+        <input type="date" id="deadline" name="deadline" required min="{{ now_date }}">
+
+        <label for="start_duration">Starting time of examination:</label>
+        <input type="time" id="start_duration" name="start_duration" required>
+
+        <label for="end_duration">Ending time of examination:</label>
+        <input type="time" id="end_duration" name="end_duration" required>
+
+        <center><button type="submit" class="submit-btn">Create Exam</button></center>
+    </form>
+    {% else %}
+    <p class="error-message">❌ You do not have permission to create assignments.</p>
+    {% endif %}
+</div>
+<script>
+    const formattedNow = "{{ now_time }}";  // Example: "2025-04-20T15:45"
+
+    function validateStartTimeOnly() {
+        const startInput = document.getElementById('start_duration');
+        const dateInput = document.getElementById('deadline');
+
+        if (!dateInput.value || !startInput.value) return;
+
+        // Parse formattedNow to a real Date safely
+        const nowParts = formattedNow.split("T"); // ['2025-04-20', '15:45']
+        const dateParts = nowParts[0].split("-"); // ['2025', '04', '20']
+        const timeParts = nowParts[1].split(":"); // ['15', '45']
+
+        const now = new Date(
+            parseInt(dateParts[0]),   // year
+            parseInt(dateParts[1]) - 1, // month (0-based)
+            parseInt(dateParts[2]),   // day
+            parseInt(timeParts[0]),   // hour
+            parseInt(timeParts[1]),   // minute
+            0                         // seconds
+        );
+
+        const selectedDate = dateInput.value;
+        const selectedTime = startInput.value;
+
+        // Combine selected date and time
+        const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
+        const fiveMinLater = new Date(now.getTime() + 5 * 60 * 1000);
+
+        const isToday = selectedDate === nowParts[0];
+
+        if (isToday) {
+            if (selectedDateTime < now) {
+                alert("Start time cannot be in the past.");
+                startInput.value = '';
+            } else if (selectedDateTime < fiveMinLater) {
+                alert("Start time must be at least 5 minutes from now.");
+                startInput.value = '';
+            }
+        }
+    }
+
+    // Run the check when user changes either date or time
+    document.getElementById('start_duration').addEventListener('change', validateStartTimeOnly);
+    document.getElementById('deadline').addEventListener('change', validateStartTimeOnly);
+</script>
+
+<script>
+    const startInput = document.getElementById("start_duration");
+    const endInput = document.getElementById("end_duration");
+    startInput.addEventListener('change', checktime);
+    endInput.addEventListener('change', checktime);
+
+    function checktime() {
+        if (endInput.value !== '' && startInput.value >= endInput.value) {
+            alert("End timing cannot be before start timing!");
+        }
+    }
+</script>
+</div>
+{% endblock %}
