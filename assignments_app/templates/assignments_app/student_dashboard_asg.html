@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/dashboard_style.css' %}">
+
+<style>
+    .text-red {
+        color: red;
+    }
+
+    .text-green {
+        color: #2ecc71;
+    }
+</style>
+<div class="assignments-container">
+    <h2 class="heading">Assignment Dashboard</h2>
+    
+    <div id="notificationSidebar" class="notification-sidebar">
+        <div class="sidebar-header">
+            <h3>Notifications</h3>
+            <button id="closeSidebar">✖</button>
+        </div>
+        <div class="notification-content">
+            {% for notification in request.user.notifications.all %}
+            <div class="notification-box">
+                <p>{{ notification.message }}</p>
+                <small>{{ notification.created_at }}</small>
+                {% if not notification.is_read %}
+                <form method="POST" action="{% url 'assignments_app:mark_notification_read' notification.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Mark as Read</button>
+                </form>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p>No new notifications.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="assignment-list">
+        <div class="notification-toggle">
+            <button id="toggleNotifications" title="View Notifications">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+        {% if assignments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Assignment Name</th>
+                    <th>Instructor</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Submit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr class="{% if assignment.deadline < now %}late{% else %}on-time{% endif %}">
+                    <td>
+                        <a href="{% url 'assignments_app:submission_details' assignment.id %}"
+                            class="{% if assignment.deadline < now %}text-red{% else %}text-green{% endif %}"
+                            style="text-decoration: none;">
+                            {{ assignment.name }}
+                        </a>
+                    </td>
+                    <td>{{ assignment.instructor.username }}</td>
+                    <td>{{ assignment.deadline }}</td>
+                    <td>
+                        {% if assignment.deadline < now %} <span class="late">Past Due</span>
+                            {% else %}
+                            <span class="open">Active</span>
+                            {% endif %}
+                    </td>
+                    <td>
+                        {% if assignment.id in submitted_ids %}
+                        <button disabled>Already Submitted</button>
+                        {% elif assignment.deadline < now %} <button disabled>Deadline Passed</button>
+                            {% else %}
+                            <a href="{% url 'assignments_app:submit_assignment' assignment.id %}">Submit</a>
+                            {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-assignments">No assignments available.</p>
+        {% endif %}
+    </div>
+
+    <!--
+    <h3>Notifications</h3>
+
+    {% for notification in request.user.notifications.all %}
+    <div class="notification-box">
+        <p>{{ notification.message }}</p>
+        <small>{{ notification.created_at }}</small>
+        {% if not notification.is_read %}
+        <form method="POST" action="{% url 'assignments_app:mark_notification_read' notification.id %}">
+            {% csrf_token %}
+            <button type="submit">Mark as Read</button>
+        </form>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>No new notifications.</p>
+    {% endfor %}
+    -->
+
+    <script>
+        document.getElementById("toggleNotifications").addEventListener("click", function () {
+            document.getElementById("notificationSidebar").classList.add("open");
+        });
+    
+        document.getElementById("closeSidebar").addEventListener("click", function () {
+            document.getElementById("notificationSidebar").classList.remove("open");
+        });
+    </script>
+    
+</div>
+{% endblock %}

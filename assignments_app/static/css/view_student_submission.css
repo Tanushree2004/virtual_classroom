@@ -1,0 +1,99 @@
+.view_student_submission {
+    max-width: 1200px;
+    margin: 10px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    max-height: 600px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.view_student_submission h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.view_student_submission h3 {
+    font-size: 1.3rem;
+    margin-top: 25px;
+    color: #444;
+}
+
+.view_student_submission p {
+    font-size: 1rem;
+    margin: 8px 0;
+}
+
+.view_student_submission ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 8px 0;
+}
+
+.view_student_submission ul li {
+    margin: 6px 0;
+    font-size: 0.95rem;
+}
+
+.view_student_submission i {
+    margin-right: 8px;
+    color: #555;
+}
+
+.view_student_submission a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.view_student_submission a:hover {
+    text-decoration: underline;
+}
+
+.view_student_submission textarea {
+    width: 100%;
+    height: 120px;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.view_student_submission form {
+    margin-top: 20px;
+}
+
+.view_student_submission label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.view_student_submission button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.view_student_submission button:hover {
+    background-color: #0056b3;
+}
+
+.view_student_submission hr {
+    margin: 25px 0;
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+}

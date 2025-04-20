@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="view_submission">
+    <link rel="stylesheet" href="{% static 'css/view_submission.css' %}">
+    <h2>Submissions for {{ assignment.name }}</h2>
+
+    {% if submissions %}
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Submitted On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in submissions %}
+            <tr>
+                <td>{{ submission.student.username }}</td>
+                <td>{{ submission.submitted_at }}</td>
+                <td><a href="{% url 'assignments_app:view_student_submission' submission.id %}">View Submission</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No submissions yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

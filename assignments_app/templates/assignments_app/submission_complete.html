@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="submission">
+    <link rel="stylesheet" href="{% static 'css/submission.css' %}">
+    <h2>Assignment Submitted!</h2>
+
+    <p>Your MCQ Score: {{ mcq_score }} / {{ total_mcq }}</p>
+
+    <a href="{% url 'assignments_app:student_dashboard_asg' %}">Back to Dashboard</a>
+</div>
+{% endblock %}

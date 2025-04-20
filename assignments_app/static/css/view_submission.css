@@ -1,0 +1,60 @@
+.view_submission {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    max-height: 600px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.view_submission h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.view_submission table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.view_submission th,
+.view_submission td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.view_submission th {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.view_submission tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.view_submission a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.view_submission a:hover {
+    text-decoration: underline;
+}
+
+.view_submission p {
+    text-align: center;
+    color: #666;
+    font-size: 1.05rem;
+    margin-top: 20px;
+}

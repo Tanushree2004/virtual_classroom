@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create Assignment{% endblock %}
+
+{% block content %}
+<div class="assign">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/create_form_style.css' %}">
+
+    <div class="assignment-form-container">
+        <h2 class="heading">Create New Assignment</h2>
+
+        {% if user.role == "Instructor" %}
+        <form method="POST" action="{% url 'assignments_app:create_assignment' %}">
+            {% csrf_token %}
+
+            <label for="title">Assignment Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+
+            <!--label for="class_group">Class Group:</label>
+        <input type="text" id="group" name="group" required-->
+            <label for="class_group">Class Group:</label>
+            <select id="group" name="group" required>
+                <option value="" disabled selected>-- Select a Classroom --</option>
+                {% for classroom in classrooms %}
+                <option value="{{ classroom.title }}">{{ classroom.title }}</option>
+                {% endfor %}
+            </select>
+
+
+            <label for="deadline">Deadline:</label>
+            <input type="datetime-local" id="deadline" name="deadline" required min="{{ now }}">
+
+
+            <center><button type="submit" class="submit-btn">Create Assignment</button></center>
+        </form>
+        {% else %}
+        <p class="error-message">❌ You do not have permission to create assignments.</p>
+        {% endif %}
+
+        <script>
+            // Function to pad numbers to ensure two digits (e.g., 9 -> 09)
+            function pad(n) {
+                return n < 10 ? '0' + n : n;
+            }
+
+            // Function to check if selected time is in the past or too close
+            function validateDeadline() {
+                const deadlineInput = document.getElementById('deadline');
+                const now = new Date();
+                now.setSeconds(0, 0); // Round to nearest minute
+
+                const localNow = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+                // Create a date object for 5 minutes from now
+                const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+                const localFiveMinutesFromNow = `${fiveMinutesFromNow.getFullYear()}-${pad(fiveMinutesFromNow.getMonth() + 1)}-${pad(fiveMinutesFromNow.getDate())}T${pad(fiveMinutesFromNow.getHours())}:${pad(fiveMinutesFromNow.getMinutes())}`;
+
+                // Check if the selected time is in the past
+                if (deadlineInput.value && deadlineInput.value < localNow) {
+                    alert("The selected time is in the past. Please choose a future time.");
+                    deadlineInput.value = ''; // Reset input field
+                }
+                // Check if the selected time is within 5 minutes of the current time
+                else if (deadlineInput.value && deadlineInput.value < localFiveMinutesFromNow) {
+                    alert("The selected time is too soon. Please choose a time at least 5 minutes from now.");
+                    deadlineInput.value = ''; // Reset input field
+                }
+            }
+
+            // Add event listener to the input field to check when the user changes the value
+            document.getElementById('deadline').addEventListener('change', validateDeadline);
+        </script>
+    </div>
+</div>
+{% endblock %}
