@@ -166,6 +166,7 @@ openai==1.72.0
 opencv-python==4.11.0.86
 openpyxl==3.1.5
 overrides==7.7.0
+python-3.10.13
 packaging==24.2
 pandas==2.2.3
 pandasgui==0.2.14
