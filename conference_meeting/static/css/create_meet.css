@@ -1,0 +1,88 @@
+/* Container for the whole section */
+.create-meeting-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Heading */
+.create-meeting-container h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #2C3E50;
+}
+
+/* Labels */
+.create-meeting-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Inputs */
+.create-meeting-container input[type="text"],
+.create-meeting-container input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+    transition: border-color 0.2s;
+}
+
+.create-meeting-container input:focus {
+    outline: none;
+    border-color: #2C3E50;
+}
+
+/* Button */
+#create-meeting-btn {
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #2C3E50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#create-meeting-btn:hover {
+    background-color: #1a252f;
+}
+
+/* Success message container */
+#meeting-link-container {
+    background-color: #f2f2f2;
+    margin-top: 30px;
+    padding: 20px;
+    border-left: 5px solid #2C3E50;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#meeting-link-container h3 {
+    color: #2C3E50;
+    margin-bottom: 10px;
+}
+
+#meeting-link-container input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+}
