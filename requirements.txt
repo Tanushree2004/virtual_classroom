@@ -76,7 +76,7 @@ fitz==0.0.1.dev2
 fonttools==4.55.8
 fqdn==1.5.1
 frozenlist==1.5.0
-fsspec==2025.2.0
+fsspec==2024.12.0
 fuzzywuzzy==0.18.0
 gcloud==0.18.3
 google-api-core==2.24.1
