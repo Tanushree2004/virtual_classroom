@@ -264,15 +264,16 @@ def submit_exam(request, exam_id):
     total_mcq = 0
     mcq_answers = {}
     descriptive_answers = {}
-    now = datetime.now()
-    duration = (
+    #now = datetime.now()
+    now = timezone.now()
+    """duration = (
         datetime.combine(exam.deadline, exam.end_duration)- max(datetime.combine(exam.deadline, exam.start_duration),now)
-    ).total_seconds()
-    
-    exam_start_datetime = datetime.combine(exam.deadline, exam.start_duration)
+    ).total_seconds()"""
+    exam_start_datetime = make_aware(datetime.combine(exam.deadline, exam.start_duration))
     exam_started = now >= exam_start_datetime
-    exam_end_datetime = datetime.combine(exam.deadline, exam.end_duration)
+    exam_end_datetime = make_aware(datetime.combine(exam.deadline, exam.end_duration))
     exam_end = now >= exam_end_datetime
+    duration = (exam_end_datetime - max(exam_start_datetime,now)).total_seconds()
     if request.method == "POST":
         for question in questions:
             if question.is_mcq:
