@@ -116,6 +116,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "flashcards/static",
     BASE_DIR / "exam/static",
     BASE_DIR / "whiteboard/static",
+    BASE_DIR / "conference_meeting/static",
 ]
 LOGIN_URL = '/login/' 
 MEDIA_URL = '/media/'
