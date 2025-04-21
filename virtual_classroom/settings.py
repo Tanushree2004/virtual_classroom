@@ -132,11 +132,11 @@ MIDDLEWARE.append('virtual_classroom.middleware.TenantMiddleware')
 load_dotenv()
 GOOGLE_NEWS_API_KEY = os.getenv("GOOGLE_NEWS_API_KEY")
 
-"""CHANNEL_LAYERS = {
+CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
-}"""
+}
 """CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -144,7 +144,7 @@ GOOGLE_NEWS_API_KEY = os.getenv("GOOGLE_NEWS_API_KEY")
             "hosts": [("127.0.0.1", 6379)],
         },
     },
-}"""
+}
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -175,5 +175,6 @@ else:
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         }
     }
+    """
 
 CSP_CONNECT_SRC = ("'self'", "wss://127.0.0.1:8000")
