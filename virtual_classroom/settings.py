@@ -132,10 +132,48 @@ MIDDLEWARE.append('virtual_classroom.middleware.TenantMiddleware')
 load_dotenv()
 GOOGLE_NEWS_API_KEY = os.getenv("GOOGLE_NEWS_API_KEY")
 
-CHANNEL_LAYERS = {
+"""CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
+}"""
+"""CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}"""
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [{
+                "address": ("redis.railway.internal", 6379),
+                "password": "JdXDxNdIIpltyJhmKgJOYrMBSYpnbLTJ",
+            }],
+        },
+    },
 }
+#redis://default:yourpassword@yourhost.upstash.io:6379
+if os.getenv("REDIS_URL"):
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.getenv("REDIS_URL"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "PARSER_CLASS": "redis.connection.HiredisParser",  # Optional, improve speed
+            }
+        }
+    }
+else:
+    # Local fallback
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
 
 CSP_CONNECT_SRC = ("'self'", "wss://127.0.0.1:8000")
