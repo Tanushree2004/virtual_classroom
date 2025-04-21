@@ -85,11 +85,13 @@
                     <li><a href="{% url 'resource_library:home' %}"><i class="bi bi-file-earmark-text"></i> Resources</a></li>                   
                     {% endif %}
                     <li><a href="{% url 'discussions:discussion_list' %}"><i class="bi bi-chat-dots"></i> Discussion Forum</a></li>
+                         {% if user.role == "Instructor" or user.role == "Student" %}
                     <li class="expandable">
                         <i class="bi bi-calendar-check"></i> Assessments
                     </li>
+                        {% if user.role == "Instructor" or user.role == "Student" %}
                     <ul class="sub-menu">
-                    {% if user.role == "Instructor" or user.role == "Student" %}
+                    
                     <li><a href="{% url 'assignments_app:dashboard_redirect_asg' %}"><i class="bi bi-list-task"></i>Assignments</a></li>
                     {% endif %}
                     {% if user.role == "Instructor" or user.role == "Student" %}
@@ -100,6 +102,8 @@
                     </a></li>
                     {% endif %}
                 </ul>
+                        {% endif %}
+                        {% if user.role == "Instructor" or user.role == "Student" %}
                 <li class="expandable">
                     <i class="bi bi-calendar-check"></i> Other
                 </li>
@@ -111,6 +115,7 @@
                 <li><a href="{% url 'flashcards:upload_file' %}"><i class="bi bi-pencil-square"></i>Flashcards</a></li>
                 {% endif %}
                 </ul>
+                        {% endif %}
                     <li><a href="{% url 'profile' %}"><i class="bi bi-house-door"></i> My account</a></li>
                     <li><a href="{% url 'user_settings' %}"><i class="bi bi-gear"></i> Settings</a></li>
                    
