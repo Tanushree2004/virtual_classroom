@@ -1,64 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Create Meeting{% endblock %}
+<div class="create-meet">
 
-{% block content %}
-<div class="create-meeting-container">
-    <h2>Create a New Meeting</h2>
-    <form method="POST">
-        {% csrf_token %}
-        <label for="name">Meeting Name:</label>
-        <input type="text" id="meeting_name" name="meeting_name" required>
+    
+    {% block content %}
+    <link rel='stylesheet' type='text/css' media='screen' href='{% static "css/create_meet.css" %}'>
+    <div class="create-meeting-container">
+        <h2>Create a New Meeting</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="name">Meeting Name:</label>
+            <input type="text" id="meeting_name" name="meeting_name" required>
 
-        <label for="name">Class Name:</label>
-        <input type="text" id="class" name="class" required>
+            <label for="name">Class Name:</label>
+            <input type="text" id="class" name="class" required>
 
-        <label for="password">Meeting Password:</label>
-        <input type="password" id="password" name="password" required>
+            <label for="password">Meeting Password:</label>
+            <input type="password" id="password" name="password" required>
 
-        <button type="submit" id="create-meeting-btn"><i class="bi bi-calendar-plus"></i> Create Meeting</button>
-    </form>
-    {% if meeting_link %}
-    <div id="meeting-link-container">
-        <h3>Meeting Created Successfully!</h3>
-        <p>Your meeting link:</p>
-        <input type="text" id="meeting-link" value="{{ meeting_link }}" readonly>
+            <center><button type="submit" id="create-meeting-btn"><i class="bi bi-calendar-plus"></i> Create Meeting</button></center>
+        </form>
+        {% if meeting_link %}
+        <div id="meeting-link-container">
+            <h3>Meeting Created Successfully!</h3>
+            <p>Your meeting link:</p>
+            <input type="text" id="meeting-link" value="{{ meeting_link }}" readonly>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
+
+    <script>
+        document.getElementById("create-meeting-btn").addEventListener("click", function () {
+            alert("Meeting Created Successfully!");
+        });
+    </script>
 </div>
-
-<style>
-.create-meeting-container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    background: #f4f4f4;
-    border-radius: 8px;
-    text-align: center;
-}
-
-input, button {
-    width: 85%;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #0056b3;
-}
-</style>
-
-<script>
-    document.getElementById("create-meeting-btn").addEventListener("click", function() {
-        alert("Meeting Created Successfully!");
-    });
-</script>
 {% endblock %}
